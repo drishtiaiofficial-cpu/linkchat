@@ -1,0 +1,8 @@
+{
+  "name": "linkchat",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Personal Instagram comment-to-DM tool (official Meta API, own accounts only)",
+  "packageManager": "pnpm@12.21.0",
+  "scripts": { "doctor": "echo doctor coming in step 0.6" }
+}
