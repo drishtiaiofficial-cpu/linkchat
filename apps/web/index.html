@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#54341F">
+<title>LinkChat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:ital,wght@0,700;1,700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7EEE3;--bg2:#ECD9C6;--brown:#54341F;--tan:#A66C42;--card:#fff;--green:#2F7D4F;--amber:#B7791F;--red:#B3402F}
+@media (prefers-color-scheme:dark){:root{--bg:#1E1712;--bg2:#2A2018;--brown:#F7EEE3;--tan:#C98B5B;--card:#2F241B}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(var(--bg),var(--bg2));color:var(--brown);font-family:Inter,'Noto Sans Devanagari',sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom))}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 0}
+.logo{font-family:Lora,serif;font-weight:700;font-size:22px}.logo i{color:var(--tan)}
+.clock{text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
+.clock small{display:block;font-weight:400;opacity:.7;font-size:12px}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--green);display:inline-block}
+h1{font-family:Lora,serif;font-size:28px;margin:12px 0 4px}h1 i{color:var(--tan)}
+.card{background:var(--card);border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 4px 16px rgba(84,52,31,.12)}
+.chat{min-height:120px}.msg{background:var(--bg2);border-radius:14px;padding:10px 12px;margin:6px 0;max-width:90%}
+.me{margin-left:auto;background:var(--tan);color:#fff}
+form{display:flex;gap:8px;margin-top:10px}
+input{flex:1;min-height:44px;border-radius:12px;border:1px solid var(--tan);padding:0 12px;font-size:16px;background:var(--bg);color:var(--brown)}
+button{min-height:44px;min-width:44px;border:0;border-radius:12px;background:var(--tan);color:#fff;font-weight:600;padding:0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.stat b{display:block;font-size:24px;font-family:Lora,serif}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">Link<i>Chat</i></div>
+  <div class="clock"><span id="clk">--:--:--</span><small id="dt">IST</small><small>last sync <span id="sync">0</span> s ago</small></div>
+  <div><span class="dot" title="health"></span></div>
+</header>
+<h1>Namaste <i>Vipul</i></h1>
+<div class="card">
+  <b>Jenny</b>
+  <div class="chat" id="chat"><div class="msg">Main Jenny hoon, LinkChat ki assistant. Abhi preview mode hai, asli data jaldi judega.</div></div>
+  <form id="f"><input id="q" placeholder="Jenny se poochho: aaj kaisa chal raha hai?" autocomplete="off"><button type="submit">Bhejo</button></form>
+</div>
+<div class="grid">
+  <div class="card stat"><span>Accounts</span><b>0</b></div>
+  <div class="card stat"><span>DMs aaj</span><b>0</b></div>
+  <div class="card stat"><span>Queue</span><b>0</b></div>
+  <div class="card stat"><span>Mode</span><b style="font-size:18px">Dry-run</b></div>
+</div>
+<script>
+var clk=document.getElementById('clk'),dt=document.getElementById('dt'),sy=document.getElementById('sync'),last=Date.now();
+function tick(){
+  var d=new Date();
+  clk.textContent=d.toLocaleTimeString('en-GB',{timeZone:'Asia/Kolkata'});
+  dt.textContent=d.toLocaleDateString('en-GB',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric'})+' IST';
+  sy.textContent=Math.floor((Date.now()-last)/1000)%60;
+}
+setInterval(function(){if(!document.hidden)tick()},1000);tick();
+document.getElementById('f').addEventListener('submit',function(e){
+  e.preventDefault();
+  var i=document.getElementById('q'),c=document.getElementById('chat');
+  if(!i.value.trim())return;
+  var a=document.createElement('div');a.className='msg me';a.textContent=i.value;c.appendChild(a);
+  var b=document.createElement('div');b.className='msg';b.textContent='Abhi main preview mode mein hoon, jawab dene ke liye asli data jodna baaki hai.';c.appendChild(b);
+  i.value='';
+});
+</script>
+</body>
+</html>
