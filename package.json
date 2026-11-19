@@ -5,7 +5,7 @@
   "description": "Personal Instagram comment-to-DM tool (official Meta API, own accounts only)",
   "packageManager": "pnpm@12.21.0",
   "scripts": {
-    "doctor": "echo doctor coming in step 0.6",
+    "doctor": "node tools/doctor.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "test": "vitest run"
