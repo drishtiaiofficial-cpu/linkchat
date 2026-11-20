@@ -182,19 +182,46 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 
 .hrole{position:static;font-size:10px;letter-spacing:.14em;line-height:1;color:var(--tan);background:var(--soft);border:1px solid var(--line);border-radius:99px;padding:4px 9px;flex:none}
 .sheet{touch-action:pan-y;overscroll-behavior:contain}.sheet .sh-head{touch-action:none}
+
+body.adding #gate{display:grid}
+body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{display:none!important}
+.gbox .gbtn{background:#fff;color:#1f1f1f;border:1px solid #dadce0;display:flex;align-items:center;justify-content:center;gap:10px}
+.lgOr{display:flex;align-items:center;gap:10px;color:var(--muted);margin:14px 0 4px;font-size:13px}
+.lgOr:before,.lgOr:after{content:"";flex:1;height:1px;background:var(--line)}
+.lgSub{color:var(--muted);margin:6px 0}
+.otp{display:flex;gap:8px;justify-content:center;margin:12px 0 4px}
+.gbox .otp input{width:46px;min-height:56px;padding:0;margin:0;font-size:22px;font-weight:700}
+.gbox .lgLink{background:none;color:var(--tan);min-height:44px;width:auto;margin:4px 6px 0;font-weight:600}
+#lgCancel{display:none}body.adding #lgCancel{display:inline-block}
+.lgAv{width:34px;height:34px;border-radius:50%;background:var(--tan);color:var(--tan-ink);display:grid;place-items:center;font-weight:700;flex:none}
+.gbox .lgAcct{display:flex;align-items:center;gap:10px;text-align:left;background:var(--soft);color:var(--ink);border:1px solid var(--line);word-break:break-all}
+.devRow{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);margin-top:6px}
+.devRow button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
 </style>
 </head>
 <body>
 <div id="gate"><div class="gbox">
 <img src="/icon-192.png" alt="" width="72" height="72">
 <h1>Link<i>Chat</i></h1>
-<div id="lgIn"><p>Email daalo, login code aayega.</p>
-<input id="lgEmail" type="email" inputmode="email" autocomplete="email" placeholder="email">
-<button id="lgSend" type="button">Code bhejo</button>
-<div id="lgS2" hidden><input id="lgCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="code">
-<button id="lgVerify" type="button">Login</button></div>
-<p id="lgMsg" role="status"></p></div>
-<div id="lgNo" hidden><h2>Access nahi mila</h2><p id="lgNoMail"></p><button id="lgNoOut" type="button">Logout</button></div>
+<div id="lgIn">
+<div id="lgS1">
+<p class="lgSub">Sign in to continue</p>
+<button id="lgGoogle" type="button" class="gbtn"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg> Continue with Google</button>
+<div class="lgOr"><span>or</span></div>
+<input id="lgEmail" type="email" inputmode="email" autocomplete="email" autocapitalize="none" placeholder="Email address">
+<button id="lgSend" type="button">Continue with email</button>
+</div>
+<div id="lgS2" hidden>
+<p class="lgSub">Enter the 6-digit code sent to<br><b id="lgTo"></b></p>
+<div class="otp" id="lgBoxes"><input inputmode="numeric" autocomplete="one-time-code" aria-label="Digit 1"><input inputmode="numeric" aria-label="Digit 2"><input inputmode="numeric" aria-label="Digit 3"><input inputmode="numeric" aria-label="Digit 4"><input inputmode="numeric" aria-label="Digit 5"><input inputmode="numeric" aria-label="Digit 6"></div>
+<button id="lgVerify" type="button">Verify and sign in</button>
+<button id="lgResend" type="button" class="lgLink" disabled>Resend code</button><button id="lgBack" type="button" class="lgLink">Use a different email</button>
+</div>
+<div id="lgAcc" hidden></div>
+<p id="lgMsg" role="status"></p>
+<button id="lgCancel" type="button" class="lgLink">Cancel</button>
+</div>
+<div id="lgNo" hidden><h2>Access denied</h2><p>This email is not on the LinkChat access list.<br><b id="lgNoMail"></b></p><p class="lgSub">Ask the owner to add you.</p><button id="lgNoOut" type="button">Sign out</button></div>
 </div></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -325,7 +352,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
       </section>
       <section data-view="set" hidden>
         <div class="hero"><h1>Settings</h1></div>
-        <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Logout</button><button class="abtn alt" id="acOutAll" type="button">Sab devices se logout</button></div>
+        <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Logout</button><button class="abtn alt" id="acOutAll" type="button">Sab devices se logout</button><div id="devAcc"></div><button class="abtn alt" id="acAdd" type="button">Dusra account jodo</button></div>
         <div class="card" id="custCard" style="margin-top:12px"><h3>Customize (sirf Owner)</h3>
           <label for="cuName">Assistant ka naam</label><input type="text" id="cuName" maxlength="20" placeholder="Jenny">
           <div class="cuRow"><img id="cuPrev" alt="" hidden><button class="abtn alt" id="cuLogoBtn" type="button" style="width:auto">DP chuno</button><button class="abtn alt" id="cuLogoClear" type="button" style="width:auto">DP hatao</button><input type="file" id="cuFile" accept="image/*" hidden></div>
