@@ -163,6 +163,15 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 .brand{position:relative}
 .hrole{position:absolute;left:-2px;bottom:-8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;line-height:1;color:var(--tan-ink);background:var(--tan);border-radius:99px;padding:2px 6px}
 .rtag[hidden],.hrole[hidden]{display:none}
+
+.hrole{left:48px;top:-4px;bottom:auto;background:none;color:var(--tan);padding:0;font-size:9px}
+@media (max-width:560px){.hrole{left:0;top:-9px}}
+#admCard{display:none}body[data-role=owner] #admCard{display:block}
+.admRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--line)}
+.admE{flex:1 1 180px;min-width:0;word-break:break-all;font-weight:600}.admE small{display:block;color:var(--muted);font-weight:400}
+.admRow select,.admRow button,#admCard select,#admCard input{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
+#admCard input{width:100%;box-sizing:border-box;margin:6px 0}
+.admDanger{background:transparent!important;color:var(--red)!important}
 </style>
 </head>
 <body>
@@ -310,6 +319,10 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
           <label class="cuT"><input type="checkbox" id="cuJ" checked> Assistant button dikhao</label>
           <label class="cuT"><input type="checkbox" id="cuL" checked> Quick links dikhao</label>
           <button class="abtn" id="cuSave" type="button">Save (sabko dikhega)</button><p id="cuMsg" role="status"></p></div>
+        <div class="card" id="admCard" style="margin-top:12px"><h3>Admins (sirf Owner)</h3><div id="admList"></div>
+          <input id="admEmail" type="email" inputmode="email" placeholder="Gmail daalo">
+          <div class="cuRow"><select id="admRole"><option value="admin">Admin</option><option value="viewer">Viewer</option></select><button class="abtn" id="admAdd" type="button" style="width:auto">Add karo</button></div>
+          <button class="abtn alt admDanger" id="admKill" type="button">Sabka access band</button><p id="admMsg" role="status"></p></div>
         <div class="card" style="margin-top:16px">
           <h3>Theme</h3>
           <div class="seg" role="group" aria-label="Theme">
@@ -359,6 +372,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="/auth.js"></script>
 <script src="/brand.js"></script>
+<script src="/admin.js"></script>
 
 <script>
 (function(){

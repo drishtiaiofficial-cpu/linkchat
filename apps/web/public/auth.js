@@ -26,7 +26,7 @@ async function check(s){
   try{
     var b=document.body.classList;
     if(!s){b.remove('authed');document.body.dataset.role='';$('lgIn').hidden=false;$('lgNo').hidden=true;if(hErr)msg(decodeURIComponent(hErr.replace(/\+/g,' ')),true);return}
-    var r=await sb.from('admins').select('email,role,status').maybeSingle(),d=r.data;
+    var r=await sb.from('admins').select('email,role,status'),em=((s.user&&s.user.email)||'').toLowerCase(),d=(r.data||[]).find(function(x){return String(x.email).toLowerCase()===em})||null;
     if(r.error||!d||d.status!=='active'){b.remove('authed');$('lgIn').hidden=true;$('lgNo').hidden=false;$('lgNoMail').textContent=(s.user&&s.user.email)||'';return}
     $('acEmail').textContent=d.email;$('acRole').textContent=d.role;b.add('authed');window.dispatchEvent(new CustomEvent('lc-authed',{detail:d}));
   }catch(e){fail(e)}finally{busy=false}
