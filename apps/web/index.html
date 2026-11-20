@@ -181,6 +181,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 .accD{border-top:1px solid var(--line);padding:10px 0}.accD summary{min-height:44px;display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
 
 .hrole{position:static;font-size:10px;letter-spacing:.14em;line-height:1;color:var(--tan);background:var(--soft);border:1px solid var(--line);border-radius:99px;padding:4px 9px;flex:none}
+.sheet{touch-action:pan-y;overscroll-behavior:contain}.sheet .sh-head{touch-action:none}
 </style>
 </head>
 <body>
@@ -387,6 +388,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 <script src="/brand.js"></script>
 <script src="/admin.js"></script>
 <script src="/accounts.js"></script>
+<script src="/swipe.js"></script>
 
 <script>
 (function(){
