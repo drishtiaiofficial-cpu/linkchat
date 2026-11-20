@@ -158,6 +158,11 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 .cuT{display:flex;gap:10px;align-items:center;min-height:44px}
 #cuPrev{width:56px;height:56px;border-radius:14px;object-fit:cover;background:var(--soft)}
 .x-jenny .fab,.x-jenny .sheet{display:none!important}.x-links .qlinks{display:none}
+
+.rtag{display:inline-block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--tan);background:var(--soft);border:1px solid var(--line);border-radius:99px;padding:2px 10px;margin-bottom:6px}
+.brand{position:relative}
+.hrole{position:absolute;left:-2px;bottom:-8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;line-height:1;color:var(--tan-ink);background:var(--tan);border-radius:99px;padding:2px 6px}
+.rtag[hidden],.hrole[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -196,7 +201,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 
 <div class="shell">
   <header class="top">
-    <div class="brand"><img src="/icon-192.png" alt=""><span>Link<i>Chat</i></span></div>
+    <div class="brand"><img src="/icon-192.png" alt=""><b class="hrole" id="hrole" hidden></b><span>Link<i>Chat</i></span></div>
     <div class="clock"><b id="clk">--:--:--</b><small id="dte">&nbsp;</small><small id="syn">last sync</small></div>
     <div class="right">
       <span class="badge">Dry-run</span>
@@ -216,9 +221,9 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
     <main>
       <section data-view="home">
         <div class="hero">
+          <small class="rtag" id="rtag" hidden></small>
           <h1 id="greet">Namaste <i>Vipul</i></h1>
           <p id="greetSub">&nbsp;</p>
-          <div class="rbadge" id="rbadge" hidden></div>
           <div class="qlinks"><a href="https://www.instagram.com/vipulxtech/" target="_blank" rel="noopener">Instagram kholo</a><a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta Developers</a></div>
         </div>
 
@@ -300,7 +305,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
         <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Logout</button><button class="abtn alt" id="acOutAll" type="button">Sab devices se logout</button></div>
         <div class="card" id="custCard" style="margin-top:12px"><h3>Customize (sirf Owner)</h3>
           <label for="cuName">Assistant ka naam</label><input type="text" id="cuName" maxlength="20" placeholder="Jenny">
-          <div class="cuRow"><img id="cuPrev" alt="" hidden><button class="abtn alt" id="cuLogoBtn" type="button" style="width:auto">Logo chuno</button><button class="abtn alt" id="cuLogoClear" type="button" style="width:auto">Logo hatao</button><input type="file" id="cuFile" accept="image/*" hidden></div>
+          <div class="cuRow"><img id="cuPrev" alt="" hidden><button class="abtn alt" id="cuLogoBtn" type="button" style="width:auto">DP chuno</button><button class="abtn alt" id="cuLogoClear" type="button" style="width:auto">DP hatao</button><input type="file" id="cuFile" accept="image/*" hidden></div>
           <div>Colour</div><div class="cuRow" id="cuAcc"></div>
           <label class="cuT"><input type="checkbox" id="cuJ" checked> Assistant button dikhao</label>
           <label class="cuT"><input type="checkbox" id="cuL" checked> Quick links dikhao</label>
