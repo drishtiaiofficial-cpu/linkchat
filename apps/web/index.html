@@ -148,6 +148,16 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 .abtn.alt{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
 .qlinks{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
 .qlinks a{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;font-weight:600}
+
+#custCard{display:none}body[data-role=owner] #custCard{display:block}
+.rbadge{display:inline-block;margin-top:8px;padding:4px 14px;border-radius:99px;background:var(--soft);border:1px solid var(--line);font-weight:600;font-size:12px;color:var(--tan)}
+#custCard input[type=text]{width:100%;box-sizing:border-box;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);padding:0 12px;font:inherit;margin:6px 0 10px}
+.cuRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.cuSw{width:44px;height:44px;border-radius:50%;border:3px solid transparent;padding:0}
+.cuSw[aria-pressed=true]{border-color:var(--ink)}
+.cuT{display:flex;gap:10px;align-items:center;min-height:44px}
+#cuPrev{width:56px;height:56px;border-radius:14px;object-fit:cover;background:var(--soft)}
+.x-jenny .fab,.x-jenny .sheet{display:none!important}.x-links .qlinks{display:none}
 </style>
 </head>
 <body>
@@ -208,6 +218,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
         <div class="hero">
           <h1 id="greet">Namaste <i>Vipul</i></h1>
           <p id="greetSub">&nbsp;</p>
+          <div class="rbadge" id="rbadge" hidden></div>
           <div class="qlinks"><a href="https://www.instagram.com/vipulxtech/" target="_blank" rel="noopener">Instagram kholo</a><a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta Developers</a></div>
         </div>
 
@@ -287,6 +298,13 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
       <section data-view="set" hidden>
         <div class="hero"><h1>Settings</h1></div>
         <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Logout</button><button class="abtn alt" id="acOutAll" type="button">Sab devices se logout</button></div>
+        <div class="card" id="custCard" style="margin-top:12px"><h3>Customize (sirf Owner)</h3>
+          <label for="cuName">Assistant ka naam</label><input type="text" id="cuName" maxlength="20" placeholder="Jenny">
+          <div class="cuRow"><img id="cuPrev" alt="" hidden><button class="abtn alt" id="cuLogoBtn" type="button" style="width:auto">Logo chuno</button><button class="abtn alt" id="cuLogoClear" type="button" style="width:auto">Logo hatao</button><input type="file" id="cuFile" accept="image/*" hidden></div>
+          <div>Colour</div><div class="cuRow" id="cuAcc"></div>
+          <label class="cuT"><input type="checkbox" id="cuJ" checked> Assistant button dikhao</label>
+          <label class="cuT"><input type="checkbox" id="cuL" checked> Quick links dikhao</label>
+          <button class="abtn" id="cuSave" type="button">Save (sabko dikhega)</button><p id="cuMsg" role="status"></p></div>
         <div class="card" style="margin-top:16px">
           <h3>Theme</h3>
           <div class="seg" role="group" aria-label="Theme">
@@ -335,6 +353,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="/auth.js"></script>
+<script src="/brand.js"></script>
 
 <script>
 (function(){
