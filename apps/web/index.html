@@ -172,6 +172,13 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 .admRow select,.admRow button,#admCard select,#admCard input{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
 #admCard input{width:100%;box-sizing:border-box;margin:6px 0}
 .admDanger{background:transparent!important;color:var(--red)!important}
+
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.chip{min-height:44px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 16px;font:inherit;font-weight:600}
+.chip small{font-weight:400;opacity:.75}.chip[aria-pressed=true]{background:var(--tan);color:var(--tan-ink)}
+#accOwner{display:none}body[data-role=owner] #accOwner{display:block}
+#accHandle{width:100%;box-sizing:border-box;min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);padding:0 12px;font:inherit;margin:6px 0}
+.accD{border-top:1px solid var(--line);padding:10px 0}.accD summary{min-height:44px;display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer}
 </style>
 </head>
 <body>
@@ -234,10 +241,15 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
           <h1 id="greet">Namaste <i>Vipul</i></h1>
           <p id="greetSub">&nbsp;</p>
           <div class="qlinks"><a href="https://www.instagram.com/vipulxtech/" target="_blank" rel="noopener">Instagram kholo</a><a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta Developers</a></div>
+          <div class="card" id="accCard" style="margin-top:14px"><h3>Instagram accounts</h3>
+            <div id="accChips" class="chips"></div>
+            <div id="accOwner"><input id="accHandle" placeholder="@handle" autocapitalize="none" autocorrect="off">
+              <button class="abtn" id="accAdd" type="button">Account add karo</button><div id="accAdmin"></div></div>
+            <p id="accMsg" role="status"></p></div>
         </div>
 
         <div class="grid g4">
-          <div class="card"><h3>Accounts</h3><div class="big">0</div></div>
+          <div class="card"><h3>Accounts</h3><div class="big" id="accCount">0</div></div>
           <div class="card"><h3>DMs aaj</h3><div class="big">0</div></div>
           <div class="card"><h3>Queue</h3><div class="big">0</div></div>
           <div class="card"><h3>Mode</h3><div class="big" style="font-size:24px">Dry-run</div></div>
@@ -373,6 +385,7 @@ body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:no
 <script src="/auth.js"></script>
 <script src="/brand.js"></script>
 <script src="/admin.js"></script>
+<script src="/accounts.js"></script>
 
 <script>
 (function(){
