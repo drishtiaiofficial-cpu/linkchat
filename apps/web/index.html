@@ -135,9 +135,34 @@ main{flex:1;min-width:0;padding:18px max(16px,env(safe-area-inset-right)) calc(v
   .sheet.open{transform:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#gate{display:none;min-height:100dvh;place-items:center;padding:24px}
+body:not(.authed) #gate{display:grid}
+body:not(.authed) .shell,body:not(.authed) .fab,body:not(.authed) .sheet,body:not(.authed) .toast{display:none!important}
+.gbox{width:min(380px,100%);background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:28px 22px;text-align:center}
+.gbox img{display:block;margin:0 auto 8px;border-radius:18px}
+.gbox h1{font-family:Lora,serif;margin:0 0 6px}.gbox h1 i{color:var(--tan)}
+.gbox input{width:100%;box-sizing:border-box;margin-top:10px;min-height:48px;border-radius:14px;border:1px solid var(--line);background:var(--soft);color:var(--ink);padding:0 14px;font:inherit;text-align:center}
+.gbox button,.abtn{width:100%;margin-top:10px;min-height:48px;border-radius:14px;border:0;background:var(--tan);color:var(--tan-ink);font:inherit;font-weight:600;padding:0 16px}
+.gbox button:disabled{opacity:.55}
+.abtn.alt{background:var(--soft);color:var(--ink);border:1px solid var(--line)}
+.qlinks{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.qlinks a{min-height:44px;display:inline-flex;align-items:center;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none;font-weight:600}
 </style>
 </head>
 <body>
+<div id="gate"><div class="gbox">
+<img src="/icon-192.png" alt="" width="72" height="72">
+<h1>Link<i>Chat</i></h1>
+<div id="lgIn"><p>Email daalo, login code aayega.</p>
+<input id="lgEmail" type="email" inputmode="email" autocomplete="email" placeholder="email">
+<button id="lgSend" type="button">Code bhejo</button>
+<div id="lgS2" hidden><input id="lgCode" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="code">
+<button id="lgVerify" type="button">Login</button></div>
+<p id="lgMsg" role="status"></p></div>
+<div id="lgNo" hidden><h2>Access nahi mila</h2><p id="lgNoMail"></p><button id="lgNoOut" type="button">Logout</button></div>
+</div></div>
+
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></symbol>
@@ -183,6 +208,7 @@ main{flex:1;min-width:0;padding:18px max(16px,env(safe-area-inset-right)) calc(v
         <div class="hero">
           <h1 id="greet">Namaste <i>Vipul</i></h1>
           <p id="greetSub">&nbsp;</p>
+          <div class="qlinks"><a href="https://www.instagram.com/vipulxtech/" target="_blank" rel="noopener">Instagram kholo</a><a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener">Meta Developers</a></div>
         </div>
 
         <div class="grid g4">
@@ -260,6 +286,7 @@ main{flex:1;min-width:0;padding:18px max(16px,env(safe-area-inset-right)) calc(v
       </section>
       <section data-view="set" hidden>
         <div class="hero"><h1>Settings</h1></div>
+        <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Logout</button><button class="abtn alt" id="acOutAll" type="button">Sab devices se logout</button></div>
         <div class="card" style="margin-top:16px">
           <h3>Theme</h3>
           <div class="seg" role="group" aria-label="Theme">
@@ -305,6 +332,9 @@ main{flex:1;min-width:0;padding:18px max(16px,env(safe-area-inset-right)) calc(v
   </form>
 </aside>
 <div class="toast" id="toast" role="status"></div>
+<script src="/config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="/auth.js"></script>
 
 <script>
 (function(){
