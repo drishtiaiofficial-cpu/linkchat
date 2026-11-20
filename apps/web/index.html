@@ -198,6 +198,11 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 .devRow{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);margin-top:6px}
 .devRow button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
 #reqCard{display:none}body[data-role=owner] #reqCard{display:block}
+
+#actCard{display:none}body[data-role=owner] #actCard{display:block}
+.actRow{padding:10px 0;border-top:1px solid var(--line)}.actRow:first-child{border-top:0}
+.actT{word-break:break-word}.actRow small{display:block;color:var(--muted);margin-top:2px;word-break:break-all}
+#actList{max-height:420px;overflow:auto;overscroll-behavior:contain}
 </style>
 </head>
 <body>
@@ -368,6 +373,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
         <div class="card" id="reqCard" style="margin-top:12px"><h3>Access requests <small id="reqN"></small></h3>
           <label class="cuT"><input type="checkbox" id="reqOn"> Naye log access request bhej sakein</label>
           <div id="reqList"></div><h4 style="margin:14px 0 4px">Blocked</h4><div id="blkList"></div><p id="reqMsg" role="status"></p></div>
+        <div class="card" id="actCard" style="margin-top:12px"><h3>Activity log</h3><div id="actList"><p>Load ho raha hai...</p></div></div>
         <div class="card" style="margin-top:16px">
           <h3>Theme</h3>
           <div class="seg" role="group" aria-label="Theme">
@@ -421,6 +427,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 <script src="/accounts.js"></script>
 <script src="/swipe.js"></script>
 <script src="/requests.js"></script>
+<script src="/activity.js"></script>
 
 <script>
 (function(){
