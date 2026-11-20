@@ -5,7 +5,7 @@ var KEY='lc_accts';
 function qerr(){var s=(location.hash||'')+'&'+(location.search||''),m=/error_description=([^&]+)/.exec(s);return m?decodeURIComponent(m[1].replace(/\+/g,' ')):''}
 var hErr=qerr();
 var sb=window.supabase.createClient(C.url,C.key);window.LC_SB=sb;
-var cool=0,busy=false,cur='',tmr=null,pend='',verifying=false;
+var cool=0,busy=false,cur='',tmr=null,pend='',verifying=false,poll=null;
 function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function store(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}}}
 function put(o){try{localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
@@ -84,15 +84,24 @@ function pick(ev){
 $('lgAcc').addEventListener('click',pick);
 $('devAcc').addEventListener('click',pick);
 $('acAdd').onclick=function(){document.body.classList.add('adding');show('in');msg('');chooser()};
+async function denied(){
+  var T=$('lgNoText'),H=$('lgNoH'),Q=$('lgReq');Q.hidden=true;
+  var r=await sb.rpc('my_access_state'),st=r.error?'closed':r.data;
+  var M={open:['Access required','This email is not on the access list. You can ask the owner for access.'],closed:['Access denied','This email is not on the LinkChat access list. Ask the owner to add you.'],pending:['Request sent','Waiting for the owner to approve. This page updates by itself.'],blocked:['Access blocked','The owner has blocked this email.'],off:['Access is off','Your access has been turned off by the owner.']};
+  var m=M[st]||M.closed;H.textContent=m[0];T.textContent=m[1];Q.hidden=st!=='open';
+  if(st==='pending'&&!poll)poll=setInterval(function(){sb.auth.getSession().then(function(x){if(x.data&&x.data.session)check(x.data.session)})},15000);
+  if(st!=='pending'){clearInterval(poll);poll=null}
+}
+$('lgReq').onclick=async function(){var q=$('lgReq');q.disabled=true;await sb.rpc('request_access');q.disabled=false;denied()};
 async function check(s){
   if(s&&document.body.classList.contains('adding')&&String((s.user&&s.user.email)||'').toLowerCase()===cur)return;
   if(busy)return;busy=true;
   try{
     var b=document.body.classList;
-    if(!s){b.remove('authed');b.remove('adding');document.body.dataset.role='';cur='';show('in');chooser();if(hErr){msg(hErr,true);hErr=''}return}
+    if(!s){clearInterval(poll);poll=null;b.remove('authed');b.remove('adding');document.body.dataset.role='';cur='';show('in');chooser();if(hErr){msg(hErr,true);hErr=''}return}
     var r=await sb.from('admins').select('email,role,status'),em=String((s.user&&s.user.email)||'').toLowerCase(),d=(r.data||[]).find(function(x){return String(x.email).toLowerCase()===em})||null;
-    if(r.error||!d||d.status!=='active'){b.remove('authed');b.remove('adding');show('no');$('lgNoMail').textContent=em;return}
-    cur=em;save(s);
+    if(r.error||!d||d.status!=='active'){b.remove('authed');b.remove('adding');show('no');$('lgNoMail').textContent=em;await denied();return}
+    clearInterval(poll);poll=null;cur=em;save(s);
     $('acEmail').textContent=d.email;$('acRole').textContent=d.role;
     b.remove('adding');b.add('authed');
     if(location.hash||location.search)history.replaceState(null,'',location.pathname);

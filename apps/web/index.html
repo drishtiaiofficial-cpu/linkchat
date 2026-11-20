@@ -197,6 +197,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 .gbox .lgAcct{display:flex;align-items:center;gap:10px;text-align:left;background:var(--soft);color:var(--ink);border:1px solid var(--line);word-break:break-all}
 .devRow{display:flex;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);margin-top:6px}
 .devRow button{min-height:44px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
+#reqCard{display:none}body[data-role=owner] #reqCard{display:block}
 </style>
 </head>
 <body>
@@ -221,7 +222,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 <p id="lgMsg" role="status"></p>
 <button id="lgCancel" type="button" class="lgLink">Cancel</button>
 </div>
-<div id="lgNo" hidden><h2>Access denied</h2><p>This email is not on the LinkChat access list.<br><b id="lgNoMail"></b></p><p class="lgSub">Ask the owner to add you.</p><button id="lgNoOut" type="button">Sign out</button></div>
+<div id="lgNo" hidden><h2 id="lgNoH">Access denied</h2><p id="lgNoText" class="lgSub"></p><p><b id="lgNoMail"></b></p><button id="lgReq" type="button" hidden>Request access</button><button id="lgNoOut" type="button" class="lgLink">Sign out</button></div>
 </div></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -364,6 +365,9 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
           <input id="admEmail" type="email" inputmode="email" placeholder="Gmail daalo">
           <div class="cuRow"><select id="admRole"><option value="admin">Admin</option><option value="viewer">Viewer</option></select><button class="abtn" id="admAdd" type="button" style="width:auto">Add karo</button></div>
           <button class="abtn alt admDanger" id="admKill" type="button">Sabka access band</button><p id="admMsg" role="status"></p></div>
+        <div class="card" id="reqCard" style="margin-top:12px"><h3>Access requests <small id="reqN"></small></h3>
+          <label class="cuT"><input type="checkbox" id="reqOn"> Naye log access request bhej sakein</label>
+          <div id="reqList"></div><h4 style="margin:14px 0 4px">Blocked</h4><div id="blkList"></div><p id="reqMsg" role="status"></p></div>
         <div class="card" style="margin-top:16px">
           <h3>Theme</h3>
           <div class="seg" role="group" aria-label="Theme">
@@ -416,6 +420,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 <script src="/admin.js"></script>
 <script src="/accounts.js"></script>
 <script src="/swipe.js"></script>
+<script src="/requests.js"></script>
 
 <script>
 (function(){

@@ -56,5 +56,6 @@ async function watch(){
   }catch(e){}
 }
 window.addEventListener('lc-authed',function(e){if(e.detail&&e.detail.role==='owner')load()});
+window.addEventListener('lc-refresh-admins',load);
 setInterval(watch,60000);
 })();
