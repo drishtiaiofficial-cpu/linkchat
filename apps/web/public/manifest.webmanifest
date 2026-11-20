@@ -1,0 +1,13 @@
+{
+  "name": "LinkChat",
+  "short_name": "LinkChat",
+  "description": "LinkChat: Jenny ke saath apna Instagram DM manager",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7EEE3",
+  "theme_color": "#54341F",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" }
+  ]
+}

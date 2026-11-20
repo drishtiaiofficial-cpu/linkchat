@@ -4,65 +4,444 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#54341F">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LinkChat">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>LinkChat</title>
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lora:ital,wght@0,700;1,700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Lora:ital,wght@0,600;0,700;1,600;1,700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#F7EEE3;--bg2:#ECD9C6;--brown:#54341F;--tan:#A66C42;--card:#fff;--green:#2F7D4F;--amber:#B7791F;--red:#B3402F}
-@media (prefers-color-scheme:dark){:root{--bg:#1E1712;--bg2:#2A2018;--brown:#F7EEE3;--tan:#C98B5B;--card:#2F241B}}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(var(--bg),var(--bg2));color:var(--brown);font-family:Inter,'Noto Sans Devanagari',sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 16px calc(24px + env(safe-area-inset-bottom))}
-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:14px 0}
-.logo{font-family:Lora,serif;font-weight:700;font-size:22px}.logo i{color:var(--tan)}
-.clock{text-align:center;font-variant-numeric:tabular-nums;font-weight:600}
-.clock small{display:block;font-weight:400;opacity:.7;font-size:12px}
-.dot{width:12px;height:12px;border-radius:50%;background:var(--green);display:inline-block}
-h1{font-family:Lora,serif;font-size:28px;margin:12px 0 4px}h1 i{color:var(--tan)}
-.card{background:var(--card);border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 4px 16px rgba(84,52,31,.12)}
-.chat{min-height:120px}.msg{background:var(--bg2);border-radius:14px;padding:10px 12px;margin:6px 0;max-width:90%}
-.me{margin-left:auto;background:var(--tan);color:#fff}
-form{display:flex;gap:8px;margin-top:10px}
-input{flex:1;min-height:44px;border-radius:12px;border:1px solid var(--tan);padding:0 12px;font-size:16px;background:var(--bg);color:var(--brown)}
-button{min-height:44px;min-width:44px;border:0;border-radius:12px;background:var(--tan);color:#fff;font-weight:600;padding:0 16px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
-.stat b{display:block;font-size:24px;font-family:Lora,serif}
+:root{
+  --bg:#F7EEE3;--bg2:#ECD9C6;--ink:#54341F;--muted:#8A6B54;--tan:#A66C42;--tan-ink:#fff;
+  --card:#FFFFFF;--line:rgba(84,52,31,.12);--soft:#F3E7D8;--shadow:0 6px 24px rgba(84,52,31,.10);
+  --green:#2F7D4F;--amber:#B7791F;--red:#B3402F;--info:#2F5F8F;
+  --r:20px;--tabh:68px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]){--bg:#1B1510;--bg2:#251C15;--ink:#F3E6D6;--muted:#B79C84;--tan:#C98B5B;--tan-ink:#1B1510;--card:#2A2019;--line:rgba(243,230,214,.12);--soft:#33271E;--shadow:0 6px 24px rgba(0,0,0,.35);--green:#5DBB86;--amber:#E0A94B;--red:#E07A67;--info:#7FA8D6;color-scheme:dark}
+}
+:root[data-theme=dark]{--bg:#1B1510;--bg2:#251C15;--ink:#F3E6D6;--muted:#B79C84;--tan:#C98B5B;--tan-ink:#1B1510;--card:#2A2019;--line:rgba(243,230,214,.12);--soft:#33271E;--shadow:0 6px 24px rgba(0,0,0,.35);--green:#5DBB86;--amber:#E0A94B;--red:#E07A67;--info:#7FA8D6;color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;min-height:100dvh;background:linear-gradient(180deg,var(--bg),var(--bg2)) fixed;color:var(--ink);font-family:Inter,'Noto Sans Devanagari',system-ui,sans-serif;font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Lora,'Noto Sans Devanagari',serif;margin:0;letter-spacing:-.01em}
+h2{font-size:18px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--tan);outline-offset:2px;border-radius:10px}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+[hidden]{display:none!important}
+
+.shell{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+.top{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 10px max(16px,env(safe-area-inset-left));background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand img{width:38px;height:38px;flex:none;border-radius:11px;box-shadow:0 2px 8px rgba(84,52,31,.3)}
+.brand span{font-family:Lora,serif;font-weight:700;font-size:21px;white-space:nowrap}
+@media (max-width:560px){.brand span{display:none}.top{grid-template-columns:auto 1fr auto}.badge{font-size:10px;padding:4px 7px}}
+#unlock{font-size:clamp(20px,6.2vw,28px)}.brand i{color:var(--tan)}
+.clock{text-align:center;font-variant-numeric:tabular-nums;line-height:1.15}
+.clock b{display:block;font-size:21px;font-weight:600;letter-spacing:.02em}
+.clock small{display:block;color:var(--muted);font-size:11.5px}
+.right{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.badge{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:99px;background:color-mix(in srgb,var(--info) 14%,transparent);color:var(--info);white-space:nowrap}
+.iconbtn{position:relative;width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--card);display:grid;place-items:center}
+.pulse{position:absolute;top:9px;right:9px;width:9px;height:9px;border-radius:50%;background:var(--green);border:2px solid var(--card)}
+.pulse.amber{background:var(--amber)}.pulse.red{background:var(--red)}
+
+.body{flex:1;display:flex;width:100%;max-width:1180px;margin:0 auto}
+main{flex:1;min-width:0;padding:18px max(16px,env(safe-area-inset-right)) calc(var(--tabh) + 96px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.tabs{position:fixed;z-index:25;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid var(--line)}
+.tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:52px;border:0;background:none;border-radius:14px;font-size:11px;font-weight:500;color:var(--muted)}
+.tab[aria-current=page]{color:var(--tan);background:color-mix(in srgb,var(--tan) 12%,transparent)}
+
+.hero{padding:8px 0 4px}
+.hero h1{font-size:clamp(26px,5.4vw,38px);line-height:1.1}
+.hero h1 i{color:var(--tan)}
+.hero p{margin:6px 0 0;color:var(--muted)}
+.grid{display:grid;gap:12px;margin-top:16px}
+.g4{grid-template-columns:repeat(2,1fr)}
+.g2{grid-template-columns:1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.card h3{font-size:15px;font-family:Inter,sans-serif;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.big{font-family:Lora,serif;font-weight:700;font-size:30px;line-height:1.1;font-variant-numeric:tabular-nums}
+.sub{color:var(--muted);font-size:13px;margin-top:4px}
+.sec{display:flex;align-items:center;gap:10px;margin:26px 0 0}
+.chip{font-size:11px;font-weight:600;letter-spacing:.06em;padding:4px 8px;border-radius:99px;background:color-mix(in srgb,var(--amber) 16%,transparent);color:var(--amber)}
+.bar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:12px}
+.bar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--tan),var(--amber));border-radius:99px;transition:width .9s linear}
+.kv{display:grid;grid-template-columns:1fr auto;gap:8px 12px;font-size:14px;margin:0}
+.kv dt{color:var(--muted)}.kv dd{margin:0;font-weight:600;font-variant-numeric:tabular-nums;text-align:right}
+.status{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.status::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--green)}
+.status.wait::before{background:var(--amber)}
+.rings{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center}
+.ring{--p:80;--c:var(--green);width:68px;height:68px;margin:0 auto 6px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--soft) 0);display:grid;place-items:center}
+.ring b{width:52px;height:52px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-size:15px;font-variant-numeric:tabular-nums}
+.ring.amber{--c:var(--amber)}.ring.red{--c:var(--red)}
+.rings small{color:var(--muted);font-size:12px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:64px;margin-top:8px}
+.spark span{flex:1;border-radius:4px 4px 2px 2px;background:linear-gradient(var(--tan),color-mix(in srgb,var(--tan) 45%,transparent));min-height:3px}
+.panic{width:100%;min-height:52px;border:0;border-radius:16px;background:var(--red);color:#fff;font-weight:600;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px}
+.empty{text-align:center;padding:36px 16px}
+.empty img{width:76px;height:76px;border-radius:20px}
+.empty h2{margin:12px 0 6px}
+.empty p{color:var(--muted);margin:0 auto;max-width:34ch}
+.seg{display:inline-flex;flex-wrap:wrap;background:var(--soft);border-radius:14px;padding:4px;gap:4px;margin-top:8px}
+.seg button{border:0;background:none;min-height:40px;padding:0 16px;border-radius:11px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.seg button:disabled{opacity:.5;cursor:not-allowed}
+.toast{position:fixed;z-index:60;left:50%;bottom:calc(var(--tabh) + 92px + env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:14px;font-weight:500;max-width:calc(100vw - 32px);transition:.25s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.fab{position:fixed;z-index:30;right:max(16px,env(safe-area-inset-right));bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:0;background:linear-gradient(145deg,var(--tan),#8A5530);color:#fff;display:grid;place-items:center;box-shadow:0 10px 28px rgba(166,108,66,.45)}
+.fab .ico{width:26px;height:26px}
+.fab::after{content:"";position:absolute;inset:-6px;border-radius:50%;border:2px solid var(--tan);opacity:0;animation:ping 3.2s ease-out infinite}
+@keyframes ping{0%{transform:scale(.85);opacity:.55}70%,100%{transform:scale(1.25);opacity:0}}
+.scrim{position:fixed;inset:0;z-index:40;background:rgba(20,12,6,.45);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.show{opacity:1;pointer-events:auto}
+.sheet{position:fixed;z-index:50;left:0;right:0;bottom:0;height:min(88dvh,760px);display:flex;flex-direction:column;background:var(--bg);border-radius:26px 26px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,.28);transform:translateY(105%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.8,.2,1),visibility 0s .32s}
+.sheet.open{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.8,.2,1)}
+.sh-head{display:flex;align-items:center;gap:12px;padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(145deg,var(--tan),#8A5530);color:#fff;display:grid;place-items:center;font-family:Lora,serif;font-weight:700;font-size:20px}
+.sh-head div b{display:block;font-size:16px}.sh-head div small{color:var(--muted)}
+.sh-head .grow{flex:1}
+.msgs{flex:1;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}
+.msg{max-width:88%;padding:10px 13px;border-radius:16px;background:var(--card);border:1px solid var(--line);white-space:pre-wrap;word-break:break-word}
+.msg.me{align-self:flex-end;background:var(--tan);color:var(--tan-ink);border-color:transparent}
+.quick{display:flex;gap:8px;overflow-x:auto;padding:4px 16px 10px;scrollbar-width:none}
+.quick::-webkit-scrollbar{display:none}
+.quick button{flex:none;min-height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-weight:500}
+.compose{display:flex;gap:8px;padding:8px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.compose input{flex:1;min-width:0;min-height:46px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 14px;font:inherit;font-size:16px}
+.compose .iconbtn[aria-pressed=true]{background:var(--tan);color:#fff;border-color:transparent}
+.compose .send{background:var(--tan);color:#fff;border:0}
+@media (min-width:900px){
+  :root{--tabh:0px}
+  .top{grid-template-columns:auto 1fr auto}
+  .tabs{position:sticky;top:78px;left:auto;right:auto;bottom:auto;align-self:flex-start;display:flex;flex-direction:column;width:210px;margin:18px 0 0 16px;padding:10px;gap:4px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);box-shadow:var(--shadow)}
+  .tab{flex-direction:row;justify-content:flex-start;gap:12px;font-size:14px;padding:0 14px}
+  main{padding-bottom:110px}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .g2{grid-template-columns:1fr 1fr}
+  .fab{bottom:28px}
+  .toast{bottom:100px}
+  .sheet{left:auto;top:0;right:0;bottom:0;height:auto;width:min(420px,100vw);border-radius:26px 0 0 26px;transform:translateX(105%)}
+  .sheet.open{transform:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">Link<i>Chat</i></div>
-  <div class="clock"><span id="clk">--:--:--</span><small id="dt">IST</small><small>last sync <span id="sync">0</span> s ago</small></div>
-  <div><span class="dot" title="health"></span></div>
-</header>
-<h1>Namaste <i>Vipul</i></h1>
-<div class="card">
-  <b>Jenny</b>
-  <div class="chat" id="chat"><div class="msg">Main Jenny hoon, LinkChat ki assistant. Abhi preview mode hai, asli data jaldi judega.</div></div>
-  <form id="f"><input id="q" placeholder="Jenny se poochho: aaj kaisa chal raha hai?" autocomplete="off"><button type="submit">Bhejo</button></form>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a2 2 0 0 1-2 2h-4v-7H9v7H5a2 2 0 0 1-2-2z"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M6 20v-8M12 20V4M18 20v-5"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"/><circle cx="16" cy="7" r="2.5"/><circle cx="10" cy="17" r="2.5"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></symbol>
+    <symbol id="i-spk" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 16l.7 1.8 1.8.7-1.8.7L19 21l-.7-1.8-1.8-.7 1.8-.7z"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 8l8 8"/></symbol>
+  </defs>
+</svg>
+
+<div class="shell">
+  <header class="top">
+    <div class="brand"><img src="/icon-192.png" alt=""><span>Link<i>Chat</i></span></div>
+    <div class="clock"><b id="clk">--:--:--</b><small id="dte">&nbsp;</small><small id="syn">last sync</small></div>
+    <div class="right">
+      <span class="badge">Dry-run</span>
+      <button class="iconbtn" id="bell" aria-label="Notifications"><svg class="ico"><use href="#i-bell"/></svg><span class="pulse" id="pulse"></span></button>
+    </div>
+  </header>
+
+  <div class="body">
+    <nav class="tabs" aria-label="Main">
+      <button class="tab" data-go="home" aria-current="page"><svg class="ico"><use href="#i-home"/></svg>Home</button>
+      <button class="tab" data-go="auto"><svg class="ico"><use href="#i-auto"/></svg>Automations</button>
+      <button class="tab" data-go="inbox"><svg class="ico"><use href="#i-inbox"/></svg>Inbox</button>
+      <button class="tab" data-go="stats"><svg class="ico"><use href="#i-chart"/></svg>Analytics</button>
+      <button class="tab" data-go="set"><svg class="ico"><use href="#i-gear"/></svg>Settings</button>
+    </nav>
+
+    <main>
+      <section data-view="home">
+        <div class="hero">
+          <h1 id="greet">Namaste <i>Vipul</i></h1>
+          <p id="greetSub">&nbsp;</p>
+        </div>
+
+        <div class="grid g4">
+          <div class="card"><h3>Accounts</h3><div class="big">0</div></div>
+          <div class="card"><h3>DMs aaj</h3><div class="big">0</div></div>
+          <div class="card"><h3>Queue</h3><div class="big">0</div></div>
+          <div class="card"><h3>Mode</h3><div class="big" style="font-size:24px">Dry-run</div></div>
+        </div>
+
+        <div class="grid g2">
+          <div class="card">
+            <h3><svg class="ico"><use href="#i-lock"/></svg>Live sending khulne mein</h3>
+            <div class="big" id="unlock">—</div>
+            <div class="sub">18 Dec 2026 se pehle sirf dry-run. Live tabhi jab Account Status clear ho.</div>
+            <div class="bar"><span id="unlockBar"></span></div>
+          </div>
+          <div class="card">
+            <h3><svg class="ico"><use href="#i-moon"/></svg>Quiet hours (IST)</h3>
+            <div class="status" id="quiet">—</div>
+            <div class="sub" id="quietSub">Raat 01:00 se 06:00 tak koi sending nahi.</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3><svg class="ico"><use href="#i-shield"/></svg>Safety defaults</h3>
+          <dl class="kv">
+            <dt>DM ke beech gap</dt><dd>20 s (floor 15 s)</dd>
+            <dt>Hourly cap</dt><dd>120</dd>
+            <dt>Daily cap</dt><dd>1,500</dd>
+            <dt>Quiet hours</dt><dd>01:00 – 06:00 IST</dd>
+            <dt>AI</dt><dd>Sirf dheema ya band kar sakta hai</dd>
+          </dl>
+        </div>
+
+        <div class="sec"><h2>Preview</h2><span class="chip">DEMO DATA</span></div>
+        <div class="grid g2">
+          <div class="card">
+            <h3><svg class="ico"><use href="#i-clock"/></svg>Agla safe send</h3>
+            <div class="big" id="nextSend">—</div>
+            <div class="sub">Safety engine ka live countdown (demo).</div>
+            <div class="bar"><span id="nextBar"></span></div>
+          </div>
+          <div class="card">
+            <h3><svg class="ico"><use href="#i-chart"/></svg>Backlog forecast</h3>
+            <div class="big" id="forecast">—</div>
+            <div class="sub" id="forecastSub">&nbsp;</div>
+          </div>
+        </div>
+        <div class="grid g2">
+          <div class="card">
+            <h3>Account health</h3>
+            <div class="rings">
+              <div><div class="ring" style="--p:92"><b>92</b></div><small>Demo A</small></div>
+              <div><div class="ring amber" style="--p:71"><b>71</b></div><small>Demo B</small></div>
+              <div><div class="ring red" style="--p:38"><b>38</b></div><small>Demo C</small></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3>DMs, pichhle 24 ghante</h3>
+            <div class="spark" id="spark" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <button class="panic" id="panic"><svg class="ico"><use href="#i-stop"/></svg>Panic: sab sending roko (demo)</button>
+      </section>
+
+      <section data-view="auto" hidden>
+        <div class="card empty"><img src="/icon-192.png" alt=""><h2>Pehli reel jodo</h2><p>Instagram account judne ke baad yahan tumhari reels aur automations dikhengi.</p></div>
+      </section>
+      <section data-view="inbox" hidden>
+        <div class="card empty"><img src="/icon-192.png" alt=""><h2>Inbox khaali hai</h2><p>Sawaal, complaint aur manual reply wale comments yahan aayenge.</p></div>
+      </section>
+      <section data-view="stats" hidden>
+        <div class="card empty"><img src="/icon-192.png" alt=""><h2>Abhi koi data nahi</h2><p>Comments, DMs aur clicks ka analytics pehla live send hone ke baad dikhega.</p></div>
+      </section>
+      <section data-view="set" hidden>
+        <div class="hero"><h1>Settings</h1></div>
+        <div class="card" style="margin-top:16px">
+          <h3>Theme</h3>
+          <div class="seg" role="group" aria-label="Theme">
+            <button data-theme="auto" aria-pressed="true">Auto</button>
+            <button data-theme="light" aria-pressed="false">Light</button>
+            <button data-theme="dark" aria-pressed="false">Dark</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:12px">
+          <h3>Bhasha</h3>
+          <div class="seg" role="group" aria-label="Language">
+            <button aria-pressed="true">Hinglish</button>
+            <button aria-pressed="false" disabled>हिंदी (jaldi)</button>
+            <button aria-pressed="false" disabled>English (jaldi)</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 </div>
-<div class="grid">
-  <div class="card stat"><span>Accounts</span><b>0</b></div>
-  <div class="card stat"><span>DMs aaj</span><b>0</b></div>
-  <div class="card stat"><span>Queue</span><b>0</b></div>
-  <div class="card stat"><span>Mode</span><b style="font-size:18px">Dry-run</b></div>
-</div>
+
+<button class="fab" id="fab" aria-label="Jenny kholo" aria-haspopup="dialog"><svg class="ico"><use href="#i-spark"/></svg></button>
+<div class="scrim" id="scrim"></div>
+
+<aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Jenny" inert>
+  <div class="sh-head">
+    <div class="avatar" aria-hidden="true">J</div>
+    <div class="grow"><b>Jenny</b><small>LinkChat ki assistant · preview mode</small></div>
+    <button class="iconbtn" id="close" aria-label="Band karo"><svg class="ico"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="msgs" id="msgs" aria-live="polite"></div>
+  <div class="quick" id="quick">
+    <button data-q="report">📋 Report</button>
+    <button data-q="work">✅ Aaj ka kaam</button>
+    <button data-q="queue">⏳ Queue</button>
+    <button data-q="safety">🛡️ Safety check</button>
+  </div>
+  <form class="compose" id="form" autocomplete="off">
+    <button type="button" class="iconbtn" id="mic" aria-label="Bolkar poochho"><svg class="ico"><use href="#i-mic"/></svg></button>
+    <input id="inp" type="text" placeholder="Jenny se poochho…" enterkeyhint="send" aria-label="Jenny se poochho">
+    <button type="button" class="iconbtn" id="spk" aria-pressed="false" aria-label="Jawab sunao"><svg class="ico"><use href="#i-spk"/></svg></button>
+    <button type="submit" class="iconbtn send" aria-label="Bhejo"><svg class="ico"><use href="#i-send"/></svg></button>
+  </form>
+</aside>
+<div class="toast" id="toast" role="status"></div>
+
 <script>
-var clk=document.getElementById('clk'),dt=document.getElementById('dt'),sy=document.getElementById('sync'),last=Date.now();
-function tick(){
-  var d=new Date();
-  clk.textContent=d.toLocaleTimeString('en-GB',{timeZone:'Asia/Kolkata'});
-  dt.textContent=d.toLocaleDateString('en-GB',{timeZone:'Asia/Kolkata',day:'2-digit',month:'short',year:'numeric'})+' IST';
-  sy.textContent=Math.floor((Date.now()-last)/1000)%60;
-}
-setInterval(function(){if(!document.hidden)tick()},1000);tick();
-document.getElementById('f').addEventListener('submit',function(e){
-  e.preventDefault();
-  var i=document.getElementById('q'),c=document.getElementById('chat');
-  if(!i.value.trim())return;
-  var a=document.createElement('div');a.className='msg me';a.textContent=i.value;c.appendChild(a);
-  var b=document.createElement('div');b.className='msg';b.textContent='Abhi main preview mode mein hoon, jawab dene ke liye asli data jodna baaki hai.';c.appendChild(b);
-  i.value='';
-});
+(function(){
+  'use strict';
+  var TZ='Asia/Kolkata';
+  var $=function(id){return document.getElementById(id)};
+  var fTime=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  var fDate=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,weekday:'long',day:'numeric',month:'short',year:'numeric'});
+  var fHour=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,hour:'numeric',hour12:false});
+  var UNLOCK=Date.parse('2026-12-18T00:00:00+05:30');
+  var START=Date.parse('2026-11-18T00:00:00+05:30');
+  var lastSync=Date.now(),lastGreet='';
+
+  function istHour(d){return parseInt(fHour.format(d),10)%24}
+  function toast(t){var e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(function(){e.classList.remove('show')},2600)}
+
+  function greeting(h){
+    if(h>=5&&h<12)return ['Good Morning','Naya din, naya kaam. Chalo shuru karein.'];
+    if(h>=12&&h<17)return ['Good Afternoon','Sab kuch shaant aur control mein hai.'];
+    if(h>=17&&h<22)return ['Good Evening','Din ka hisaab dekh lo, baaki main sambhal rahi hoon.'];
+    return ['Good Night','Itni raat tak? Sending to band hi hai, aaram karo.'];
+  }
+
+  function tick(){
+    var now=new Date();
+    $('clk').textContent=fTime.format(now);
+    $('dte').textContent=fDate.format(now)+' IST';
+    var g=greeting(istHour(now));
+    if(g[0]!==lastGreet){lastGreet=g[0];$('greet').innerHTML=g[0]+', <i>Vipul</i>';$('greetSub').textContent=g[1]}
+    var age=Math.round((Date.now()-lastSync)/1000);
+    $('syn').textContent='last sync '+age+' s ago';
+    $('pulse').className='pulse'+(age>60?' red':age>20?' amber':'');
+    var left=UNLOCK-now.getTime();
+    if(left<=0){$('unlock').textContent='Date aa gayi';$('unlockBar').style.width='100%'}
+    else{
+      var d=Math.floor(left/864e5),hh=Math.floor(left%864e5/36e5),mm=Math.floor(left%36e5/6e4);
+      $('unlock').textContent=d+' din '+hh+' ghante '+mm+' min';
+      $('unlockBar').style.width=Math.min(100,Math.max(0,(now.getTime()-START)/(UNLOCK-START)*100)).toFixed(1)+'%';
+    }
+    var h=istHour(now),q=h>=1&&h<6,qe=$('quiet');
+    qe.textContent=q?'Abhi quiet hours chal rahe hain':'Abhi sending allowed (dry-run)';
+    qe.className='status'+(q?' wait':'');
+    $('quietSub').textContent=q?'06:00 IST tak queue ruki rahegi.':'Raat 01:00 se 06:00 tak koi sending nahi.';
+  }
+  setInterval(function(){if(!document.hidden)tick()},1000);
+  setInterval(function(){if(!document.hidden)lastSync=Date.now()},10000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)tick()});
+
+  var demoLeft=0,demoTotal=20;
+  function nextSend(){
+    if(demoLeft<=0){demoTotal=15+Math.floor(Math.random()*11);demoLeft=demoTotal}
+    $('nextSend').textContent=demoLeft+' s';
+    $('nextBar').style.width=((demoTotal-demoLeft)/demoTotal*100)+'%';
+    demoLeft--;
+  }
+  setInterval(function(){if(!document.hidden)nextSend()},1000);nextSend();
+  var qn=240,gap=20,secs=qn*gap,hrs=Math.floor(secs/3600),mins=Math.round(secs%3600/60);
+  $('forecast').textContent='~'+(hrs?hrs+' ghante ':'')+mins+' min';
+  $('forecastSub').textContent=qn+' DMs queue mein, '+gap+' s gap par. 7 din ki deadline ke andar.';
+  var bars=[2,1,0,0,0,0,3,6,9,12,14,11,8,10,13,15,12,9,7,10,14,11,6,4],sp=$('spark');
+  bars.forEach(function(v){var s=document.createElement('span');s.style.height=Math.max(5,v/15*100)+'%';s.title=v+' DMs';sp.appendChild(s)});
+  $('panic').addEventListener('click',function(){toast('Preview mode: abhi kuch bhej hi nahi raha, sab safe hai.')});
+  $('bell').addEventListener('click',function(){toast('Koi nayi notification nahi.')});
+
+  var views=document.querySelectorAll('[data-view]'),tabs=document.querySelectorAll('.tab');
+  function go(v){
+    if(!document.querySelector('[data-view="'+v+'"]'))v='home';
+    views.forEach(function(s){s.hidden=s.getAttribute('data-view')!==v});
+    tabs.forEach(function(t){if(t.getAttribute('data-go')===v)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
+    window.scrollTo(0,0);
+  }
+  tabs.forEach(function(t){t.addEventListener('click',function(){var v=t.getAttribute('data-go');history.replaceState(null,'','#'+v);go(v)})});
+  go((location.hash||'#home').slice(1));
+
+  function setTheme(t,save){
+    var r=document.documentElement;
+    if(t==='light'||t==='dark')r.setAttribute('data-theme',t);else r.removeAttribute('data-theme');
+    document.querySelectorAll('button[data-theme]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-theme')===t?'true':'false')});
+    if(save){try{localStorage.setItem('lc-theme',t)}catch(e){}}
+  }
+  document.querySelectorAll('button[data-theme]').forEach(function(b){b.addEventListener('click',function(){setTheme(b.getAttribute('data-theme'),true)})});
+  try{var st=localStorage.getItem('lc-theme');if(st)setTheme(st,false)}catch(e){}
+
+  var sheet=$('sheet'),scrim=$('scrim'),fab=$('fab'),msgs=$('msgs'),speak=false;
+  function add(text,me){var m=document.createElement('div');m.className='msg'+(me?' me':'');m.textContent=text;msgs.appendChild(m);msgs.scrollTop=msgs.scrollHeight;return m}
+  var answers={
+    report:'Aaj ka report (preview):\nAccounts 0 · DMs 0 · Queue 0\nMode: Dry-run. Live sending 18 Dec 2026 ke baad, sirf Account Status clear hone par.',
+    work:'Aaj ka kaam:\n1. Web preview live hai ✅\n2. Meta app "LinkChat" banana\n3. Composer: link saved link jaisa hi, max 25 words, 1 emoji',
+    queue:'Queue khaali hai. Abhi koi account juda nahi, aur dry-run ON hai.',
+    safety:'Safety check: sab theek ✅\nGap 20 s (floor 15 s) · hourly 120 · daily 1500\nQuiet hours 01:00 se 06:00 IST. AI sirf dheema ya band kar sakta hai.',
+    none:'Abhi preview mode hai, asli data jaldi judega.'
+  };
+  function reply(key){
+    var text=answers[key]||answers.none;
+    var typing=add('…',false);
+    setTimeout(function(){typing.textContent=text;msgs.scrollTop=msgs.scrollHeight;
+      if(speak&&'speechSynthesis' in window){try{speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(text);u.lang='hi-IN';speechSynthesis.speak(u)}catch(e){}}
+    },450);
+  }
+  function ask(text){
+    var t=text.trim();if(!t)return;add(t,true);
+    var l=t.toLowerCase(),k='';
+    if(/report|रिपोर्ट/.test(l))k='report';
+    else if(/kaam|काम|work|today|aaj/.test(l))k='work';
+    else if(/queue|क्यू|line/.test(l))k='queue';
+    else if(/safe|safety|सेफ/.test(l))k='safety';
+    reply(k);
+  }
+  function openJ(){
+    sheet.removeAttribute('inert');sheet.classList.add('open');scrim.classList.add('show');
+    fab.setAttribute('aria-expanded','true');
+    if(!msgs.children.length)add('Main Jenny hoon, LinkChat ki assistant. Abhi preview mode hai, asli data jaldi judega.\nNeeche ke buttons dabao ya kuch poochho.',false);
+    setTimeout(function(){$('inp').focus({preventScroll:true})},320);
+  }
+  function closeJ(){
+    sheet.classList.remove('open');scrim.classList.remove('show');sheet.setAttribute('inert','');
+    fab.setAttribute('aria-expanded','false');fab.focus();
+    if('speechSynthesis' in window){try{speechSynthesis.cancel()}catch(e){}}
+  }
+  fab.addEventListener('click',openJ);
+  $('close').addEventListener('click',closeJ);
+  scrim.addEventListener('click',closeJ);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&sheet.classList.contains('open'))closeJ()});
+  $('quick').addEventListener('click',function(e){var b=e.target.closest('button[data-q]');if(!b)return;add(b.textContent.replace(/^\S+\s/,''),true);reply(b.getAttribute('data-q'))});
+  $('form').addEventListener('submit',function(e){e.preventDefault();var i=$('inp');ask(i.value);i.value=''});
+  $('spk').addEventListener('click',function(){speak=!speak;this.setAttribute('aria-pressed',speak?'true':'false');toast(speak?'Jenny ab bolkar jawab degi.':'Awaaz band.')});
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  $('mic').addEventListener('click',function(){
+    if(!SR){toast('Is browser mein mic support nahi hai.');return}
+    try{var r=new SR();r.lang='hi-IN';r.interimResults=false;
+      r.onresult=function(ev){ask(ev.results[0][0].transcript)};
+      r.onerror=function(){toast('Mic se sunai nahi diya.')};
+      r.start();toast('Boliye, sun rahi hoon…')}catch(e){toast('Mic shuru nahi hua.')}
+  });
+
+  tick();
+})();
 </script>
 </body>
 </html>
