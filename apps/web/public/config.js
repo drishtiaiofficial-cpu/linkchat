@@ -1,1 +1,1 @@
-window.LC_CONFIG={"url": "https://xlbytspniyfhflldjaqs.supabase.co", "key": "vsb_publishable_Hblhwgy3cB3nEwoDhPeMow_KAjmvPS0"};
+window.LC_CONFIG={"url": "https://xlbytspniyfhflldjaqs.supabase.co", "key": "sb_publishable_Hblhwgy3cB3nEwoDhPeMow_KAjmvPS0"};
