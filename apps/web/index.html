@@ -251,6 +251,20 @@ html,body{overscroll-behavior-y:contain}
 .quick button{flex:none;white-space:nowrap;min-height:40px;border-radius:99px;padding:0 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600}
 .compose{padding:8px 12px calc(10px + env(safe-area-inset-bottom));gap:6px;border-top:1px solid var(--line);background:var(--card)}
 .compose input{border-radius:99px}
+
+/* shell v1: one scroll area, header fixed, no body lock */
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{min-height:0;background:linear-gradient(180deg,var(--bg),var(--bg2))}
+.shell{height:100vh;height:100dvh;min-height:0;overflow:hidden}
+.top{position:relative;top:auto;flex:none;z-index:35}
+.body{flex:1;min-height:0;overflow:hidden}
+main{min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain}
+.tabs{z-index:25}
+.modal-open main{overflow:hidden}
+.sheet,.swBox{overscroll-behavior:contain}
+#gate{height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain}
+.gbox{margin:auto}
+@media (min-width:900px){.tabs{position:static;top:auto;flex:none}}
 </style>
 </head>
 <body>
@@ -479,18 +493,18 @@ html,body{overscroll-behavior-y:contain}
 <div id="swList"></div>
 <button class="abtn alt" id="swAdd" type="button">Add account</button>
 <button class="abtn alt admDanger" id="swOut" type="button">Sign out</button></div></div>
-<script src="/config.js?v=1795233655"></script>
+<script src="/config.js?v=1795234203"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="/auth.js?v=1795233655"></script>
-<script src="/brand.js?v=1795233655"></script>
-<script src="/admin.js?v=1795233655"></script>
-<script src="/accounts.js?v=1795233655"></script>
-<script src="/swipe.js?v=1795233655"></script>
-<script src="/ptr.js?v=1795233655"></script>
-<script src="/sheet.js?v=1795233655"></script>
-<script src="/requests.js?v=1795233655"></script>
-<script src="/activity.js?v=1795233655"></script>
-<script src="/security.js?v=1795233655"></script>
+<script src="/auth.js?v=1795234203"></script>
+<script src="/brand.js?v=1795234203"></script>
+<script src="/admin.js?v=1795234203"></script>
+<script src="/accounts.js?v=1795234203"></script>
+<script src="/swipe.js?v=1795234203"></script>
+<script src="/ptr.js?v=1795234203"></script>
+<script src="/sheet.js?v=1795234203"></script>
+<script src="/requests.js?v=1795234203"></script>
+<script src="/activity.js?v=1795234203"></script>
+<script src="/security.js?v=1795234203"></script>
 
 <script>
 (function(){
@@ -560,7 +574,7 @@ html,body{overscroll-behavior-y:contain}
     if(!document.querySelector('[data-view="'+v+'"]'))v='home';
     views.forEach(function(s){s.hidden=s.getAttribute('data-view')!==v});
     tabs.forEach(function(t){if(t.getAttribute('data-go')===v)t.setAttribute('aria-current','page');else t.removeAttribute('aria-current')});
-    window.scrollTo(0,0);
+    (document.querySelector('main')||window).scrollTo(0,0);
   }
   tabs.forEach(function(t){t.addEventListener('click',function(){var v=t.getAttribute('data-go');history.replaceState(null,'','#'+v);go(v)})});
   go((location.hash||'#home').slice(1));

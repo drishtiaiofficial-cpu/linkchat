@@ -2,7 +2,7 @@
 'use strict';
 var el=document.getElementById('ptr'),sy=0,d=0,on=false,busy=false;
 if(!el)return;
-function top(){return (document.scrollingElement||document.documentElement).scrollTop<=0}
+function top(){var m=document.querySelector('main');return !m||m.scrollTop<=0}
 function skip(t){return t.closest&&t.closest('.sheet,.swBox,#actList,#msgs,input,textarea,select')}
 document.addEventListener('touchstart',function(e){
   if(busy||e.touches.length!==1||!document.body.classList.contains('authed')||!top()||skip(e.target)||document.querySelector('#sheet.open,#swSheet.open')){on=false;return}

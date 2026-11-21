@@ -32,10 +32,7 @@ new MutationObserver(function(ms){
 'use strict';
 var sh=document.getElementById('sheet'),sc=document.getElementById('scrim'),cl=document.getElementById('close'),sw=document.getElementById('swSheet');
 if(!sh)return;
-var y=0,locked=false,b=document.body;
-function lock(){if(locked)return;locked=true;y=window.pageYOffset||document.documentElement.scrollTop||0;b.style.position='fixed';b.style.top=(-y)+'px';b.style.left='0';b.style.right='0';b.style.width='100%'}
-function unlock(){if(!locked)return;locked=false;b.style.position='';b.style.top='';b.style.left='';b.style.right='';b.style.width='';window.scrollTo(0,y)}
-function sync(){(sh.classList.contains('open')||(sw&&sw.classList.contains('open')))?lock():unlock()}
+function sync(){document.body.classList.toggle('modal-open',sh.classList.contains('open')||!!(sw&&sw.classList.contains('open')))}
 new MutationObserver(sync).observe(sh,{attributes:true,attributeFilter:['class']});
 if(sw)new MutationObserver(sync).observe(sw,{attributes:true,attributeFilter:['class']});
 if(sc){
