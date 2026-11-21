@@ -291,6 +291,10 @@ body.modal-open .fab::after{animation:none}
 .sheet{bottom:28px;height:min(calc(100dvh - 110px),720px)}
 .sheet.full{bottom:28px;height:calc(100dvh - 90px)}
 }
+
+#gapCard[hidden]{display:none}
+#gapVal,#gapUnit{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
+#gapVal{width:110px}.chip:disabled{opacity:.45}
 </style>
 </head>
 <body>
@@ -371,6 +375,10 @@ body.modal-open .fab::after{animation:none}
             <div id="accOwner"><input id="accHandle" placeholder="@handle" autocapitalize="none" autocorrect="off">
               <button class="abtn" id="accAdd" type="button">Add Instagram account</button><div id="accAdmin"></div></div>
             <p id="accMsg" role="status"></p></div>
+          <div class="card" id="gapCard" style="margin-top:12px" hidden><h3>Sending speed <small id="gapWho"></small></h3>
+            <p id="gapNow"></p><div id="gapChips" class="chips"></div>
+            <div class="cuRow"><input id="gapVal" type="number" inputmode="numeric" min="1" step="1" aria-label="Gap"><select id="gapUnit" aria-label="Unit"><option value="1">seconds</option><option value="60">minutes</option></select><button class="abtn" id="gapSave" type="button" style="width:auto">Save</button></div>
+            <p id="gapNote"></p><p id="gapMsg" role="status"></p></div>
         </div>
 
         <div class="grid g4">
@@ -520,18 +528,19 @@ body.modal-open .fab::after{animation:none}
 <div id="swList"></div>
 <button class="abtn alt" id="swAdd" type="button">Add account</button>
 <button class="abtn alt admDanger" id="swOut" type="button">Sign out</button></div></div>
-<script src="/config.js?v=1795234637"></script>
+<script src="/config.js?v=1795235169"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="/auth.js?v=1795234637"></script>
-<script src="/brand.js?v=1795234637"></script>
-<script src="/admin.js?v=1795234637"></script>
-<script src="/accounts.js?v=1795234637"></script>
-<script src="/swipe.js?v=1795234637"></script>
-<script src="/ptr.js?v=1795234637"></script>
-<script src="/sheet.js?v=1795234637"></script>
-<script src="/requests.js?v=1795234637"></script>
-<script src="/activity.js?v=1795234637"></script>
-<script src="/security.js?v=1795234637"></script>
+<script src="/auth.js?v=1795235169"></script>
+<script src="/brand.js?v=1795235169"></script>
+<script src="/admin.js?v=1795235169"></script>
+<script src="/accounts.js?v=1795235169"></script>
+<script src="/gap.js?v=1795235169"></script>
+<script src="/swipe.js?v=1795235169"></script>
+<script src="/ptr.js?v=1795235169"></script>
+<script src="/sheet.js?v=1795235169"></script>
+<script src="/requests.js?v=1795235169"></script>
+<script src="/activity.js?v=1795235169"></script>
+<script src="/security.js?v=1795235169"></script>
 
 <script>
 (function(){

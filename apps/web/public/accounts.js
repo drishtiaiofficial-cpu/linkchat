@@ -33,7 +33,7 @@ async function loadAccess(){
 }
 async function load(){
   var sb=window.LC_SB;if(!sb)return;
-  var r=await sb.from('accounts').select('id,handle,label,status').order('handle');
+  var r=await sb.from('accounts').select('id,handle,label,status,gap_seconds').order('handle');
   if(r.error){msg(nice(r.error),true);return}
   A=r.data||[];
   if(!cur()){act=st('lc_active');if(!cur())act=A.length?A[0].id:null}
@@ -65,5 +65,6 @@ $('accAdmin').addEventListener('click',async function(ev){
   if(r.error)msg(nice(r.error),true);else{msg('Hata diya');load()}
 });
 window.addEventListener('lc-authed',load);
+window.addEventListener('lc-reload-accounts',load);
 setInterval(function(){if(document.body.classList.contains('authed')&&!document.hidden&&document.body.dataset.role!=='owner')load()},60000);
 })();
