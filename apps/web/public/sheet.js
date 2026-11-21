@@ -41,3 +41,9 @@ if(sc){
 }
 document.addEventListener('keydown',function(e){if(e.key==='Escape'&&sh.classList.contains('open')&&cl)cl.click()});
 })();
+
+(function(){
+'use strict';
+var sh=document.getElementById('sheet'),ex=document.getElementById('expand');
+if(sh&&ex)ex.addEventListener('click',function(){sh.classList.toggle('full')});
+})();

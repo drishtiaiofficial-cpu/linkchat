@@ -265,6 +265,18 @@ main{min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:t
 #gate{height:100vh;height:100dvh;overflow-y:auto;overscroll-behavior:contain}
 .gbox{margin:auto}
 @media (min-width:900px){.tabs{position:static;top:auto;flex:none}}
+
+/* card v1: floating assistant card on iPad and laptop */
+#expand{display:none}
+@media (min-width:700px){
+#expand{display:inline-grid}
+.scrim{background:rgba(20,12,6,.18)}
+.sheet{left:auto;top:auto;right:20px;bottom:calc(var(--tabh) + 88px + env(safe-area-inset-bottom));width:min(400px,calc(100vw - 40px));height:min(calc(100dvh - var(--tabh) - 150px),720px);min-height:320px;border-radius:20px;box-shadow:0 5px 40px rgba(0,0,0,.22);opacity:0;transform:translateY(16px) scale(.98);transition:transform .25s ease,opacity .25s ease,visibility 0s .25s}
+.sheet.open{opacity:1;transform:none;transition:transform .25s ease,opacity .25s ease}
+.sheet.full{right:12px;bottom:12px;width:min(460px,calc(100vw - 24px));height:calc(100dvh - 24px)}
+.grab{display:none}
+}
+@media (min-width:900px){.sheet{bottom:100px;height:min(calc(100dvh - 160px),720px)}.sheet.full{bottom:12px;height:calc(100dvh - 24px)}}
 </style>
 </head>
 <body>
@@ -469,6 +481,7 @@ main{min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:t
   <div class="sh-head">
     <div class="avatar" aria-hidden="true">J</div>
     <div class="grow"><b>Jenny</b><small>LinkChat ki assistant · preview mode</small></div>
+    <button class="iconbtn" id="expand" type="button" aria-label="Expand or shrink"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
     <button class="iconbtn" id="close" aria-label="Band karo"><svg class="ico"><use href="#i-x"/></svg></button>
   </div>
   <div class="msgs" id="msgs" aria-live="polite"></div>
@@ -493,18 +506,18 @@ main{min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:t
 <div id="swList"></div>
 <button class="abtn alt" id="swAdd" type="button">Add account</button>
 <button class="abtn alt admDanger" id="swOut" type="button">Sign out</button></div></div>
-<script src="/config.js?v=1795234203"></script>
+<script src="/config.js?v=1795234637"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="/auth.js?v=1795234203"></script>
-<script src="/brand.js?v=1795234203"></script>
-<script src="/admin.js?v=1795234203"></script>
-<script src="/accounts.js?v=1795234203"></script>
-<script src="/swipe.js?v=1795234203"></script>
-<script src="/ptr.js?v=1795234203"></script>
-<script src="/sheet.js?v=1795234203"></script>
-<script src="/requests.js?v=1795234203"></script>
-<script src="/activity.js?v=1795234203"></script>
-<script src="/security.js?v=1795234203"></script>
+<script src="/auth.js?v=1795234637"></script>
+<script src="/brand.js?v=1795234637"></script>
+<script src="/admin.js?v=1795234637"></script>
+<script src="/accounts.js?v=1795234637"></script>
+<script src="/swipe.js?v=1795234637"></script>
+<script src="/ptr.js?v=1795234637"></script>
+<script src="/sheet.js?v=1795234637"></script>
+<script src="/requests.js?v=1795234637"></script>
+<script src="/activity.js?v=1795234637"></script>
+<script src="/security.js?v=1795234637"></script>
 
 <script>
 (function(){
