@@ -59,3 +59,16 @@ describe('extractComments', () => {
     expect(extractComments({ object: 'page', entry: [] })).toEqual([]);
   });
 });
+
+describe('token with stray spaces', () => {
+  it('still verifies', async () => {
+    const r = await handle(new Request('https://w/?hub.mode=subscribe&hub.verify_token=tok&hub.challenge=abc'), { ...env, VERIFY_TOKEN: ' tok\n' });
+    expect(await r.text()).toBe('abc');
+  });
+  it('diag shows only lengths', async () => {
+    const r = await handle(new Request('https://w/?diag=1'), env);
+    const t = await r.text();
+    expect(t).toContain('verify_token_len');
+    expect(t).not.toContain('tok"');
+  });
+});
