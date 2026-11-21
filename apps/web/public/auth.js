@@ -105,12 +105,12 @@ async function check(s){
   if(busy)return;busy=true;
   try{
     var b=document.body.classList;
-    if(!s){clearInterval(poll);poll=null;b.remove('authed');b.remove('adding');document.body.dataset.role='';cur='';show('in');chooser();if(hErr){msg(hErr,true);hErr=''}return}
+    if(!s){clearInterval(poll);poll=null;try{localStorage.removeItem('lc_was')}catch(e){}b.remove('authed');b.remove('adding');document.body.dataset.role='';cur='';show('in');chooser();if(hErr){msg(hErr,true);hErr=''}return}
     var r=await sb.from('admins').select('email,role,status'),em=String((s.user&&s.user.email)||'').toLowerCase(),d=(r.data||[]).find(function(x){return String(x.email).toLowerCase()===em})||null;
-    if(r.error||!d||d.status!=='active'){b.remove('authed');b.remove('adding');show('no');$('lgNoMail').textContent=em;await denied();return}
+    if(r.error||!d||d.status!=='active'){try{localStorage.removeItem('lc_was')}catch(e){}b.remove('authed');b.remove('adding');show('no');$('lgNoMail').textContent=em;await denied();return}
     clearInterval(poll);poll=null;cur=em;save(s);var pa=$('profAv');if(pa)pa.textContent=em.charAt(0).toUpperCase();
     $('acEmail').textContent=d.email;$('acRole').textContent=d.role;
-    b.remove('adding');b.add('authed');
+    b.remove('adding');b.add('authed');try{localStorage.setItem('lc_was','1');localStorage.setItem('lc_role',d.role)}catch(e){}
     if(location.hash||location.search)history.replaceState(null,'',location.pathname);
     window.dispatchEvent(new CustomEvent('lc-authed',{detail:d}));renderDev();
   }catch(e){fail(e)}finally{busy=false}

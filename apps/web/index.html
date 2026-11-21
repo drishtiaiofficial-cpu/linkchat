@@ -215,9 +215,16 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 .swHead{display:flex;justify-content:space-between;align-items:center;font-family:Lora,serif;font-size:20px;margin-bottom:6px}
 @media (min-width:700px){.swBox{left:auto;right:16px;bottom:auto;top:64px;width:360px;border-radius:20px}}
 #profBtn{padding:0}#profBtn .lgAv{width:34px;height:34px}
+
+html,body{overscroll-behavior-y:contain}
+#ptr{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;margin-left:-19px;width:38px;height:38px;z-index:65;border-radius:50%;background:var(--card);box-shadow:0 4px 14px rgba(0,0,0,.18);display:grid;place-items:center;opacity:0;transform:translateY(-60px);pointer-events:none}
+.ptrC{width:18px;height:18px;border:2.5px solid var(--line);border-top-color:var(--tan);border-radius:50%}
+#ptr.spin .ptrC{animation:ptrR .7s linear infinite}
+@keyframes ptrR{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
+<script>try{if(localStorage.getItem('lc_was')){document.body.classList.add('authed');document.body.dataset.role=localStorage.getItem('lc_role')||''}}catch(e){}</script>
 <div id="gate"><div class="gbox">
 <img src="/icon-192.png" alt="" width="72" height="72">
 <h1>Link<i>Chat</i></h1>
@@ -435,6 +442,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 </aside>
 <div class="toast" id="toast" role="status"></div>
 
+<div id="ptr" aria-hidden="true"><div class="ptrC"></div></div>
 <div id="swSheet" role="dialog" aria-modal="true" aria-label="Accounts"><div id="swScrim"></div>
 <div class="swBox"><div class="swGrab"></div><div class="swHead"><b>Accounts</b><button type="button" id="swClose" class="iconbtn" aria-label="Close">&#10005;</button></div>
 <div id="swList"></div>
@@ -447,6 +455,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 <script src="/admin.js"></script>
 <script src="/accounts.js"></script>
 <script src="/swipe.js"></script>
+<script src="/ptr.js"></script>
 <script src="/requests.js"></script>
 <script src="/activity.js"></script>
 <script src="/security.js"></script>
