@@ -295,6 +295,16 @@ body.modal-open .fab::after{animation:none}
 #gapCard[hidden]{display:none}
 #gapVal,#gapUnit{min-height:46px;border-radius:12px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font:inherit;padding:0 12px}
 #gapVal{width:110px}.chip:disabled{opacity:.45}
+
+/* switch v1: real toggle switches */
+.cuT{justify-content:space-between;flex-direction:row-reverse;width:100%;cursor:pointer}
+input[type=checkbox]{-webkit-appearance:none;appearance:none;flex:none;position:relative;width:52px;height:32px;border-radius:99px;background:var(--line);border:0;margin:0;cursor:pointer;transition:background .2s ease;-webkit-tap-highlight-color:transparent}
+input[type=checkbox]::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s cubic-bezier(.3,.7,.4,1)}
+input[type=checkbox]:checked{background:#2F7D4F}
+input[type=checkbox]:checked::after{transform:translateX(20px)}
+input[type=checkbox]:focus-visible{outline:3px solid color-mix(in srgb,var(--tan) 45%,transparent);outline-offset:2px}
+input[type=checkbox]:disabled{opacity:.5;cursor:not-allowed}
+@media (prefers-reduced-motion:reduce){input[type=checkbox],input[type=checkbox]::after{transition:none}}
 </style>
 </head>
 <body>
@@ -461,15 +471,15 @@ body.modal-open .fab::after{animation:none}
           <label for="cuName">Assistant ka naam</label><input type="text" id="cuName" maxlength="20" placeholder="Jenny">
           <div class="cuRow"><img id="cuPrev" alt="" hidden><button class="abtn alt" id="cuLogoBtn" type="button" style="width:auto">DP chuno</button><button class="abtn alt" id="cuLogoClear" type="button" style="width:auto">DP hatao</button><input type="file" id="cuFile" accept="image/*" hidden></div>
           <div>Colour</div><div class="cuRow" id="cuAcc"></div>
-          <label class="cuT"><input type="checkbox" id="cuJ" checked> Assistant button dikhao</label>
-          <label class="cuT"><input type="checkbox" id="cuL" checked> Quick links dikhao</label>
+          <label class="cuT"><input type="checkbox" id="cuJ" role="switch" checked> Show assistant button</label>
+          <label class="cuT"><input type="checkbox" id="cuL" role="switch" checked> Show quick links</label>
           <button class="abtn" id="cuSave" type="button">Save (sabko dikhega)</button><p id="cuMsg" role="status"></p></div>
         <div class="card" id="admCard" style="margin-top:12px"><h3>Admins (sirf Owner)</h3><div id="admList"></div>
           <input id="admEmail" type="email" inputmode="email" placeholder="Gmail daalo">
           <div class="cuRow"><select id="admRole"><option value="admin">Admin</option><option value="viewer">Viewer</option></select><button class="abtn" id="admAdd" type="button" style="width:auto">Add karo</button></div>
           <button class="abtn alt admDanger" id="admKill" type="button">Sabka access band</button><p id="admMsg" role="status"></p></div>
         <div class="card" id="reqCard" style="margin-top:12px"><h3>Access requests <small id="reqN"></small></h3>
-          <label class="cuT"><input type="checkbox" id="reqOn"> Naye log access request bhej sakein</label>
+          <label class="cuT"><input type="checkbox" id="reqOn" role="switch"> Allow new people to request access</label>
           <div id="reqList"></div><h4 style="margin:14px 0 4px">Blocked</h4><div id="blkList"></div><p id="reqMsg" role="status"></p></div>
         
         <div class="card" id="secCard" style="margin-top:12px"><h3>Security alerts <small id="secN"></small></h3><div id="secList"><p>Load ho raha hai...</p></div><button class="abtn alt" id="secTest" type="button">Test alert banao</button><p id="secMsg" role="status"></p></div>
