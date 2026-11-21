@@ -237,6 +237,20 @@ html,body{overscroll-behavior-y:contain}
 .sheet.full{height:min(94dvh,860px)}
 }
 @media (prefers-reduced-motion:reduce){.msg{animation:none}}
+
+/* Jenny look v2 */
+.sheet{background:linear-gradient(180deg,var(--card),var(--bg) 150px);border:1px solid var(--line)}
+.sh-head{padding:6px 16px 12px;gap:12px;border-bottom:1px solid var(--line)}
+.sh-head .avatar{position:relative;width:46px;height:46px;flex:none;box-shadow:0 4px 12px rgba(166,108,66,.35);background-size:cover;background-position:center}
+.sh-head .avatar::after{content:"";position:absolute;right:-1px;bottom:-1px;width:12px;height:12px;border-radius:50%;background:#2F7D4F;border:2px solid var(--card)}
+.sh-head b{font-family:Lora,serif;font-size:19px}
+.msg{border-radius:18px 18px 18px 6px;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.msg.me{border-radius:18px 18px 6px 18px}
+.quick{display:flex;gap:8px;overflow-x:auto;padding:8px 14px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.quick::-webkit-scrollbar{display:none}
+.quick button{flex:none;white-space:nowrap;min-height:40px;border-radius:99px;padding:0 14px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:600}
+.compose{padding:8px 12px calc(10px + env(safe-area-inset-bottom));gap:6px;border-top:1px solid var(--line);background:var(--card)}
+.compose input{border-radius:99px}
 </style>
 </head>
 <body>
@@ -465,18 +479,18 @@ html,body{overscroll-behavior-y:contain}
 <div id="swList"></div>
 <button class="abtn alt" id="swAdd" type="button">Add account</button>
 <button class="abtn alt admDanger" id="swOut" type="button">Sign out</button></div></div>
-<script src="/config.js"></script>
+<script src="/config.js?v=1795233655"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="/auth.js"></script>
-<script src="/brand.js"></script>
-<script src="/admin.js"></script>
-<script src="/accounts.js"></script>
-<script src="/swipe.js"></script>
-<script src="/ptr.js"></script>
-<script src="/sheet.js"></script>
-<script src="/requests.js"></script>
-<script src="/activity.js"></script>
-<script src="/security.js"></script>
+<script src="/auth.js?v=1795233655"></script>
+<script src="/brand.js?v=1795233655"></script>
+<script src="/admin.js?v=1795233655"></script>
+<script src="/accounts.js?v=1795233655"></script>
+<script src="/swipe.js?v=1795233655"></script>
+<script src="/ptr.js?v=1795233655"></script>
+<script src="/sheet.js?v=1795233655"></script>
+<script src="/requests.js?v=1795233655"></script>
+<script src="/activity.js?v=1795233655"></script>
+<script src="/security.js?v=1795233655"></script>
 
 <script>
 (function(){
