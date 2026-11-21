@@ -277,6 +277,20 @@ main{min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:t
 .grab{display:none}
 }
 @media (min-width:900px){.sheet{bottom:100px;height:min(calc(100dvh - 160px),720px)}.sheet.full{bottom:12px;height:calc(100dvh - 24px)}}
+
+/* card v2: grows from the button corner, button hides while open */
+.fab{transition:opacity .2s ease,transform .2s ease,visibility 0s}
+body.modal-open .fab{opacity:0;transform:scale(.6);pointer-events:none;visibility:hidden;transition:opacity .2s ease,transform .2s ease,visibility 0s .2s}
+body.modal-open .fab::after{animation:none}
+@media (min-width:700px){
+.sheet{right:max(16px,env(safe-area-inset-right));bottom:calc(var(--tabh) + 16px + env(safe-area-inset-bottom));height:min(calc(100dvh - var(--tabh) - 110px),720px);transform-origin:100% 100%;transform:scale(.55);opacity:0;transition:transform .3s cubic-bezier(.2,.9,.25,1),opacity .2s ease,visibility 0s .3s}
+.sheet.open{transform:none;opacity:1;transition:transform .3s cubic-bezier(.2,.9,.25,1),opacity .2s ease}
+.sheet.full{right:max(12px,env(safe-area-inset-right));bottom:calc(var(--tabh) + 12px + env(safe-area-inset-bottom));height:calc(100dvh - var(--tabh) - 90px)}
+}
+@media (min-width:900px){
+.sheet{bottom:28px;height:min(calc(100dvh - 110px),720px)}
+.sheet.full{bottom:28px;height:calc(100dvh - 90px)}
+}
 </style>
 </head>
 <body>
