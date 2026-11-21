@@ -66,14 +66,14 @@ function renderDev(){
   var k=Object.keys(store()),h='';
   k.forEach(function(e){var on=e===cur;
     h+='<div class="devRow"><span class="lgAv">'+esc(e.charAt(0).toUpperCase())+'</span><div class="admE">'+esc(e)+'<small>'+(on?'Active':'Saved on this device')+'</small></div>'+(on?'':'<button type="button" data-sw="'+esc(e)+'">Switch</button><button type="button" class="admDanger" data-rm="'+esc(e)+'">Hatao</button>')+'</div>'});
-  el.innerHTML=h;
+  el.innerHTML=h;var s2=$('swList');if(s2)s2.innerHTML=h;
 }
 async function switchTo(e){
   var o=store(),a=o[e];if(!a)return;
   msg('Switching…');
   var r=await sb.auth.setSession({access_token:a.a,refresh_token:a.r});
   if(r.error||!r.data||!r.data.session){delete o[e];put(o);msg('Session for '+e+' has expired. Please sign in again.',true);chooser();renderDev();return}
-  document.body.classList.remove('adding');
+  document.body.classList.remove('adding');closeSw();
   await check(r.data.session);
 }
 function pick(ev){
@@ -83,6 +83,13 @@ function pick(ev){
 }
 $('lgAcc').addEventListener('click',pick);
 $('devAcc').addEventListener('click',pick);
+function openSw(){renderDev();$('swSheet').classList.add('open');$('profBtn').setAttribute('aria-expanded','true')}
+function closeSw(){var s=$('swSheet');if(s)s.classList.remove('open');var b=$('profBtn');if(b)b.setAttribute('aria-expanded','false')}
+$('profBtn').onclick=openSw;$('swClose').onclick=closeSw;$('swScrim').onclick=closeSw;
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeSw()});
+$('swList').addEventListener('click',pick);
+$('swAdd').onclick=function(){closeSw();$('acAdd').click()};
+$('swOut').onclick=function(){closeSw();$('acOut').click()};
 $('acAdd').onclick=function(){document.body.classList.add('adding');show('in');msg('');chooser()};
 async function denied(){
   var T=$('lgNoText'),H=$('lgNoH'),Q=$('lgReq');Q.hidden=true;
@@ -101,7 +108,7 @@ async function check(s){
     if(!s){clearInterval(poll);poll=null;b.remove('authed');b.remove('adding');document.body.dataset.role='';cur='';show('in');chooser();if(hErr){msg(hErr,true);hErr=''}return}
     var r=await sb.from('admins').select('email,role,status'),em=String((s.user&&s.user.email)||'').toLowerCase(),d=(r.data||[]).find(function(x){return String(x.email).toLowerCase()===em})||null;
     if(r.error||!d||d.status!=='active'){b.remove('authed');b.remove('adding');show('no');$('lgNoMail').textContent=em;await denied();return}
-    clearInterval(poll);poll=null;cur=em;save(s);
+    clearInterval(poll);poll=null;cur=em;save(s);var pa=$('profAv');if(pa)pa.textContent=em.charAt(0).toUpperCase();
     $('acEmail').textContent=d.email;$('acRole').textContent=d.role;
     b.remove('adding');b.add('authed');
     if(location.hash||location.search)history.replaceState(null,'',location.pathname);

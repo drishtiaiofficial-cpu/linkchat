@@ -206,6 +206,15 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
 
 #secCard{display:none}body[data-role=owner] #secCard{display:block}
 .secDone{opacity:.6}
+
+#swSheet{position:fixed;inset:0;z-index:70;display:none}#swSheet.open{display:block}
+#swScrim{position:absolute;inset:0;background:rgba(40,24,12,.45)}
+.swBox{position:absolute;left:0;right:0;bottom:0;max-height:80dvh;overflow:auto;background:var(--card);border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.25);animation:swUp .22s ease-out}
+@keyframes swUp{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.swGrab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto 10px}
+.swHead{display:flex;justify-content:space-between;align-items:center;font-family:Lora,serif;font-size:20px;margin-bottom:6px}
+@media (min-width:700px){.swBox{left:auto;right:16px;bottom:auto;top:64px;width:360px;border-radius:20px}}
+#profBtn{padding:0}#profBtn .lgAv{width:34px;height:34px}
 </style>
 </head>
 <body>
@@ -260,6 +269,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
     <div class="clock"><b id="clk">--:--:--</b><small id="dte">&nbsp;</small><small id="syn">last sync</small></div>
     <div class="right">
       <span class="badge">Dry-run</span>
+      <button class="iconbtn" id="profBtn" aria-label="Accounts" aria-haspopup="dialog" aria-expanded="false"><span class="lgAv" id="profAv">V</span></button>
       <button class="iconbtn" id="bell" aria-label="Notifications"><svg class="ico"><use href="#i-bell"/></svg><span class="pulse" id="pulse"></span></button>
     </div>
   </header>
@@ -282,7 +292,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
           <div class="card" id="accCard" style="margin-top:14px"><h3>Instagram accounts</h3>
             <div id="accChips" class="chips"></div>
             <div id="accOwner"><input id="accHandle" placeholder="@handle" autocapitalize="none" autocorrect="off">
-              <button class="abtn" id="accAdd" type="button">Account add karo</button><div id="accAdmin"></div></div>
+              <button class="abtn" id="accAdd" type="button">Add Instagram account</button><div id="accAdmin"></div></div>
             <p id="accMsg" role="status"></p></div>
         </div>
 
@@ -361,7 +371,7 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
       </section>
       <section data-view="set" hidden>
         <div class="hero"><h1>Settings</h1></div>
-        <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Logout</button><button class="abtn alt" id="acOutAll" type="button">Sab devices se logout</button><div id="devAcc"></div><button class="abtn alt" id="acAdd" type="button">Dusra account jodo</button></div>
+        <div class="card" style="margin-top:16px"><h3>Account</h3><div id="acEmail" style="font-weight:600;word-break:break-all"></div><div style="color:var(--muted)">Role: <span id="acRole"></span></div><button class="abtn alt" id="acOut" type="button">Sign out</button><button class="abtn alt" id="acOutAll" type="button">Sign out everywhere</button><div id="devAcc"></div><button class="abtn alt" id="acAdd" type="button">Add account</button></div>
         <div class="card" id="custCard" style="margin-top:12px"><h3>Customize (sirf Owner)</h3>
           <label for="cuName">Assistant ka naam</label><input type="text" id="cuName" maxlength="20" placeholder="Jenny">
           <div class="cuRow"><img id="cuPrev" alt="" hidden><button class="abtn alt" id="cuLogoBtn" type="button" style="width:auto">DP chuno</button><button class="abtn alt" id="cuLogoClear" type="button" style="width:auto">DP hatao</button><input type="file" id="cuFile" accept="image/*" hidden></div>
@@ -424,6 +434,12 @@ body.adding .shell,body.adding .fab,body.adding .sheet,body.adding .toast{displa
   </form>
 </aside>
 <div class="toast" id="toast" role="status"></div>
+
+<div id="swSheet" role="dialog" aria-modal="true" aria-label="Accounts"><div id="swScrim"></div>
+<div class="swBox"><div class="swGrab"></div><div class="swHead"><b>Accounts</b><button type="button" id="swClose" class="iconbtn" aria-label="Close">&#10005;</button></div>
+<div id="swList"></div>
+<button class="abtn alt" id="swAdd" type="button">Add account</button>
+<button class="abtn alt admDanger" id="swOut" type="button">Sign out</button></div></div>
 <script src="/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="/auth.js"></script>
