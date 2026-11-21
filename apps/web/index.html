@@ -221,6 +221,22 @@ html,body{overscroll-behavior-y:contain}
 .ptrC{width:18px;height:18px;border:2.5px solid var(--line);border-top-color:var(--tan);border-radius:50%}
 #ptr.spin .ptrC{animation:ptrR .7s linear infinite}
 @keyframes ptrR{to{transform:rotate(360deg)}}
+
+.msg{animation:msgIn .22s ease-out}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.typing{display:flex;gap:5px;align-items:center;padding:14px;width:fit-content}
+.msg.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:tdot 1.2s infinite}
+.msg.typing i:nth-child(2){animation-delay:.15s}.msg.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-4px)}}
+.grab{display:none;flex:none;padding:10px 0 2px;cursor:pointer}
+.grab i{display:block;width:44px;height:5px;border-radius:5px;background:var(--line);margin:0 auto}
+@media (max-width:699px){
+.grab{display:block}
+.sheet{height:min(60dvh,560px);transition:transform .32s cubic-bezier(.2,.8,.2,1),height .28s ease,visibility 0s .32s}
+.sheet.open{transition:transform .32s cubic-bezier(.2,.8,.2,1),height .28s ease}
+.sheet.full{height:min(94dvh,860px)}
+}
+@media (prefers-reduced-motion:reduce){.msg{animation:none}}
 </style>
 </head>
 <body>
@@ -421,6 +437,7 @@ html,body{overscroll-behavior-y:contain}
 <div class="scrim" id="scrim"></div>
 
 <aside class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Jenny" inert>
+  <div class="grab" id="grab" role="button" aria-label="Expand or collapse"><i></i></div>
   <div class="sh-head">
     <div class="avatar" aria-hidden="true">J</div>
     <div class="grow"><b>Jenny</b><small>LinkChat ki assistant · preview mode</small></div>
@@ -456,6 +473,7 @@ html,body{overscroll-behavior-y:contain}
 <script src="/accounts.js"></script>
 <script src="/swipe.js"></script>
 <script src="/ptr.js"></script>
+<script src="/sheet.js"></script>
 <script src="/requests.js"></script>
 <script src="/activity.js"></script>
 <script src="/security.js"></script>
