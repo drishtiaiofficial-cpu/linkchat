@@ -5,3 +5,5 @@ export function clampGap(requestedSeconds: number): number {
   return Math.max(requestedSeconds, HARD_FLOOR_GAP_SECONDS);
 }
 export * from './classifier.js';
+export * from './composer.js';
+export * from './sim.js';
