@@ -72,3 +72,15 @@ describe('token with stray spaces', () => {
     expect(t).not.toContain('tok"');
   });
 });
+
+describe('supabase key header', () => {
+  it('sb_secret key goes in apikey only', async () => {
+    const f = vi.fn(async () => new Response(null, { status: 201 }));
+    vi.stubGlobal('fetch', f);
+    const body = JSON.stringify(payload());
+    await handle(await signed(body), { ...env, SUPABASE_SERVICE_KEY: 'sb_secret_abc' });
+    const h = (f.mock.calls[0] as unknown as [string, RequestInit])[1].headers as Record<string, string>;
+    expect(h.apikey).toBe('sb_secret_abc');
+    expect(h.authorization).toBeUndefined();
+  });
+});

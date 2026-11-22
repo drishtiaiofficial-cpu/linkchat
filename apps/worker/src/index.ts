@@ -13,17 +13,20 @@ const text = (body: string, status = 200) => new Response(body, { status, header
 
 async function saveComments(env: Env, rows: unknown[]): Promise<boolean> {
   const base = clean(env.SUPABASE_URL).replace(/\/+$/, '');
+  const key = clean(env.SUPABASE_SERVICE_KEY);
+  const headers: Record<string, string> = {
+    apikey: key,
+    'content-type': 'application/json',
+    prefer: 'resolution=ignore-duplicates,return=minimal',
+  };
+  // New sb_secret_ keys are not JWTs: send them in apikey only, never as Bearer.
+  if (!key.startsWith('sb_')) headers.authorization = `Bearer ${key}`;
   const res = await fetch(`${base}/rest/v1/comments?on_conflict=comment_id`, {
     method: 'POST',
-    headers: {
-      apikey: clean(env.SUPABASE_SERVICE_KEY),
-      authorization: `Bearer ${clean(env.SUPABASE_SERVICE_KEY)}`,
-      'content-type': 'application/json',
-      prefer: 'resolution=ignore-duplicates,return=minimal',
-    },
+    headers,
     body: JSON.stringify(rows),
   });
-  if (!res.ok) console.log('supabase insert failed', res.status);
+  if (!res.ok) console.log('supabase insert failed', res.status, (await res.text()).slice(0, 300));
   return res.ok;
 }
 
