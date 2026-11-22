@@ -13,7 +13,7 @@ const iso = (ms: number) => new Date(ms).toISOString();
 const inList = (ids: string[]) => `in.(${ids.join(',')})`;
 
 /** Dry-run: same queue rules as Live (gap, caps, breaks, quiet hours, 7 day deadline), but nothing is sent. */
-export async function runDryRun(raw: Db, now = Date.now(), budget = 40): Promise<number> {
+export async function runDryRun(raw: Db, now = Date.now(), budget = 40, log: string[] = []): Promise<number> {
   let calls = 0;
   const db: Db = {
     select: <T,>(t: string, q: string) => { calls++; return raw.select<T>(t, q); },
@@ -22,6 +22,7 @@ export async function runDryRun(raw: Db, now = Date.now(), budget = 40): Promise
   };
   const pending = await db.select<{ account_id: string }>('dm_jobs', 'status=eq.queued&select=account_id&limit=1000');
   const ids = [...new Set(pending.map((p) => p.account_id))];
+  log.push(`pending ${pending.length}`);
   if (ids.length === 0) return 0;
   const states = new Map((await db.select<QState>('queue_state', `account_id=${inList(ids)}&select=*`)).map((s) => [s.account_id, s]));
   ids.sort((a, b) => Date.parse(states.get(a)?.updated_at ?? '1970-01-01') - Date.parse(states.get(b)?.updated_at ?? '1970-01-01'));
@@ -30,7 +31,7 @@ export async function runDryRun(raw: Db, now = Date.now(), budget = 40): Promise
   for (const id of ids) {
     if (calls > budget) break;
     const [acc] = await db.select<Acc>('accounts', `id=eq.${id}&select=*&limit=1`);
-    if (!acc || acc.mode !== 'dry_run' || acc.status !== 'active') continue;
+    if (!acc || acc.mode !== 'dry_run' || acc.status !== 'active') { log.push(`skip ${id.slice(0, 8)} ${acc ? `${acc.mode}/${acc.status}` : 'no account'}`); continue; }
     const jobs = await db.select<Job>('dm_jobs', `account_id=eq.${id}&status=eq.queued&order=comment_at.asc&limit=500&select=id,comment_id,campaign_id,from_id,username,reel_id,comment_at`);
     const hist = await db.select<Hist>('dm_jobs', `account_id=eq.${id}&status=in.(dry_run,sent)&sent_at=gte.${iso(now - DAY)}&order=sent_at.desc&limit=2000&select=from_id,reel_id,sent_at`);
     const optout = await db.select<{ ig_user_id: string }>('contacts', `account_id=eq.${id}&opted_out=eq.true&select=ig_user_id`);
@@ -47,7 +48,9 @@ export async function runDryRun(raw: Db, now = Date.now(), budget = 40): Promise
     const byId = new Map(jobs.map((j) => [j.id, j]));
     for (const j of jobs) q.enqueue(j.id, j.reel_id ?? 'none', j.from_id ?? j.id, Date.parse(j.comment_at));
 
+    log.push(`acc ${id.slice(0, 8)} jobs=${jobs.length} hist=${hist.length} camps=${camps.size}`);
     const msgs = new Map<string, string>();
+    let last = 'none';
     const sent: { id: string; commentId: string; at: number }[] = [];
     let t = now;
     for (let i = 0; i < 100; i++) {
@@ -60,12 +63,17 @@ export async function runDryRun(raw: Db, now = Date.now(), budget = 40): Promise
         msgs.set(job.id, r.text);
         return { ok: true };
       });
+      last = s.kind === 'wait' ? `wait:${s.reason}` : s.kind;
       if (s.kind === 'sent') { sent.push({ id: s.job.id, commentId: byId.get(s.job.id)!.comment_id, at: t }); t += 1; }
       else if (s.kind === 'wait') { if (s.retryAt >= now + WINDOW) break; t = s.retryAt; }
       else if (s.kind !== 'failed') break;
     }
 
-    for (const s of sent) await db.update('dm_jobs', `id=eq.${s.id}`, { status: 'dry_run', sent_at: iso(s.at), message: msgs.get(s.id), attempts: 1 });
+    log.push(`sent ${sent.length} last=${last}`);
+    for (const s of sent) {
+      const ok = await db.update('dm_jobs', `id=eq.${s.id}`, { status: 'dry_run', sent_at: iso(s.at), message: msgs.get(s.id), attempts: 1 });
+      if (!ok) log.push(`update failed ${s.id.slice(0, 8)}`);
+    }
     const done = q.all.filter((j) => j.status !== 'queued' && j.status !== 'sent');
     for (const j of done) {
       const error = j.status === 'expired' ? 'expired' : j.status === 'skipped' ? j.skipReason : 'compose_failed';

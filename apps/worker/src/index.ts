@@ -48,6 +48,13 @@ export async function handle(request: Request, env: Env): Promise<Response> {
 export default {
   fetch: (request: Request, env: Env) => handle(request, env),
   scheduled: (_event: unknown, env: Env, ctx: { waitUntil(p: Promise<unknown>): void }) => {
-    ctx.waitUntil(runDryRun(makeDb(clean(env.SUPABASE_URL), clean(env.SUPABASE_SERVICE_KEY))).catch((e) => console.log('dryrun failed', String(e).slice(0, 200))));
+    ctx.waitUntil((async () => {
+      const db = makeDb(clean(env.SUPABASE_URL), clean(env.SUPABASE_SERVICE_KEY));
+      const log: string[] = [];
+      let sent = 0;
+      let error: string | null = null;
+      try { sent = await runDryRun(db, Date.now(), 40, log); } catch (e) { error = String(e).slice(0, 300); }
+      await db.insert('heartbeat', { name: 'cron', at: new Date().toISOString(), info: { sent, error, log: log.slice(0, 8) } }, { onConflict: 'name' });
+    })());
   },
 };
