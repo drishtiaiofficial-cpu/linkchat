@@ -2,8 +2,12 @@ import { constantTimeEqual, extractComments, verifySignature } from './webhook.j
 import { makeDb } from './db.js';
 import { ingest } from './ingest.js';
 import { runDryRun } from './dryrun.js';
+import { connectStart, oauthCallback, refreshDue } from './oauth.js';
 
-export interface Env { APP_SECRET: string; VERIFY_TOKEN: string; SUPABASE_URL: string; SUPABASE_SERVICE_KEY: string }
+export interface Env {
+  APP_SECRET: string; VERIFY_TOKEN: string; SUPABASE_URL: string; SUPABASE_SERVICE_KEY: string;
+  INSTAGRAM_APP_ID?: string; INSTAGRAM_APP_SECRET?: string; TOKEN_KEY?: string; WEB_URL?: string;
+}
 
 const MAX_BODY = 1_000_000;
 const clean = (v: string | undefined) => (v ?? '').trim();
@@ -11,6 +15,10 @@ const text = (body: string, status = 200) => new Response(body, { status, header
 
 export async function handle(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
+  if (url.pathname === '/connect/start' || url.pathname === '/oauth/callback') {
+    const d = makeDb(clean(env.SUPABASE_URL), clean(env.SUPABASE_SERVICE_KEY));
+    return url.pathname === '/oauth/callback' ? oauthCallback(request, env, d) : connectStart(request, env, d);
+  }
   if (request.method === 'GET') {
     if (url.searchParams.get('hub.mode') === 'subscribe') {
       const token = url.searchParams.get('hub.verify_token') ?? '';
@@ -54,6 +62,7 @@ export default {
       let sent = 0;
       let error: string | null = null;
       try { sent = await runDryRun(db, Date.now(), 40, log); } catch (e) { error = String(e).slice(0, 300); }
+      try { await refreshDue(db, env, Date.now(), log); } catch (e) { log.push(`refresh error ${String(e).slice(0, 80)}`); }
       await db.insert('heartbeat', { name: 'cron', at: new Date().toISOString(), info: { sent, error, log: log.slice(0, 8) } }, { onConflict: 'name' });
     })());
   },

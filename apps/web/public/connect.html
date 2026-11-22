@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Connect Instagram | LinkChat</title>
+<style>
+:root{--bg:#f6f0e6;--ink:#3b2a1e;--card:#fffaf2;--brand:#6b4226;--line:#e3d6c3}
+@media (prefers-color-scheme:dark){:root{--bg:#1d1611;--ink:#f2e8da;--card:#2a2019;--brand:#c58a56;--line:#4a3a2c}}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;padding:24px}
+.c{max-width:420px;width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:28px}
+h1{font:600 24px Lora,Georgia,serif;margin:0 0 8px}p{margin:8px 0}a{color:var(--brand)}
+button{width:100%;margin-top:16px;padding:14px;border:0;border-radius:12px;background:var(--brand);color:#fff;font:600 16px inherit;cursor:pointer}
+button:disabled{opacity:.6}.m{margin-top:14px;font-size:14px}
+</style></head><body><div class="c">
+<h1>Connect Instagram</h1>
+<p>Log in with your Instagram Business or Creator account and tap Allow. LinkChat never sees your password.</p>
+<button id="go" disabled>Connect Instagram</button><p class="m" id="msg"></p><p class="m"><a href="/">Back to LinkChat</a></p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="/config.js"></script>
+<script>
+(function(){
+var BOT='https://linkchat-bot.drishtiai-official.workers.dev',C=window.LC_CONFIG||{},msg=document.getElementById('msg'),go=document.getElementById('go');
+var q=new URLSearchParams(location.search),E={cancelled:'You cancelled. Nothing was connected.',expired:'That link expired. Please try again.',not_professional:'This account must be an Instagram Business or Creator account.',already_connected:'This account is already connected to another workspace.',failed:'Something went wrong. Please try again.'};
+if(q.get('connected')){msg.textContent=q.get('webhook')==='failed'?'Connected, but live updates could not be switched on yet. Tell support.':'Connected! Your account is in Dry-run mode, so nothing is sent yet.';}
+else if(q.get('connect_error')){msg.textContent=E[q.get('connect_error')]||E.failed;}
+var sb=window.supabase.createClient(C.url,C.key);
+sb.auth.getSession().then(function(r){var s=r.data&&r.data.session;if(!s){msg.textContent='Please log in to LinkChat first.';return;}go.disabled=false;
+go.onclick=async function(){go.disabled=true;msg.textContent='Opening Instagram...';
+try{var res=await fetch(BOT+'/connect/start',{method:'POST',headers:{authorization:'Bearer '+s.access_token}});var j=await res.json();if(!res.ok||!j.url)throw new Error(j.error||'failed');location.href=j.url;}
+catch(e){msg.textContent='Could not start: '+(e.message||'error');go.disabled=false;}};});
+})();
+</script></body></html>
