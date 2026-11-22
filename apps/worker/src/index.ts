@@ -1,6 +1,7 @@
 import { constantTimeEqual, extractComments, verifySignature } from './webhook.js';
 import { makeDb } from './db.js';
 import { ingest } from './ingest.js';
+import { runDryRun } from './dryrun.js';
 
 export interface Env { APP_SECRET: string; VERIFY_TOKEN: string; SUPABASE_URL: string; SUPABASE_SERVICE_KEY: string }
 
@@ -44,4 +45,9 @@ export async function handle(request: Request, env: Env): Promise<Response> {
   return text('ok');
 }
 
-export default { fetch: (request: Request, env: Env) => handle(request, env) };
+export default {
+  fetch: (request: Request, env: Env) => handle(request, env),
+  scheduled: (_event: unknown, env: Env, ctx: { waitUntil(p: Promise<unknown>): void }) => {
+    ctx.waitUntil(runDryRun(makeDb(clean(env.SUPABASE_URL), clean(env.SUPABASE_SERVICE_KEY))).catch((e) => console.log('dryrun failed', String(e).slice(0, 200))));
+  },
+};

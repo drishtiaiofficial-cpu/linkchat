@@ -30,6 +30,12 @@ export class AccountQueue {
 
   constructor(private cfg: SafetyConfig, private rand: () => number) {}
 
+  seed(lastDm: Map<string, number>, lastReel: string | null, optedOut: string[]): void {
+    this.lastDm = lastDm;
+    this.lastReel = lastReel;
+    for (const u of optedOut) this.optedOut.add(u);
+  }
+
   optOut(userId: string): void {
     this.optedOut.add(userId);
   }
@@ -70,7 +76,7 @@ export class AccountQueue {
       const res = send(q);
       this.take(q);
       this.lastReel = q.reelId;
-      this.recent = [...this.recent.slice(-(FAIL_WINDOW - 1)), res.ok];
+      if (res.ok || res.error !== 'COMPOSE_FAILED') this.recent = [...this.recent.slice(-(FAIL_WINDOW - 1)), res.ok];
       if (res.ok) {
         q.status = 'sent';
         this.state = recordSend(this.state, this.cfg, now, this.rand);
