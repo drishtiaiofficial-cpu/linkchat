@@ -78,10 +78,12 @@ export function extractMessages(payload: unknown): MessageRow[] {
     const igUserId = str(entry.id);
     if (!igUserId) continue;
     for (const ev of entry.messaging) {
-      if (!isObj(ev) || !isObj(ev.message) || !isObj(ev.sender)) continue;
+      if (!isObj(ev) || !isObj(ev.sender)) continue;
+      const m = isObj(ev.message) ? ev.message : isObj(ev.postback) ? ev.postback : null;
+      if (!m) continue;
       const senderId = str(ev.sender.id);
-      if (!senderId || senderId === igUserId || ev.message.is_echo === true) continue;
-      rows.push({ ig_user_id: igUserId, sender_id: senderId, mid: str(ev.message.mid), text: typeof ev.message.text === 'string' ? ev.message.text.slice(0, 500) : '' });
+      if (!senderId || senderId === igUserId || m.is_echo === true) continue;
+      rows.push({ ig_user_id: igUserId, sender_id: senderId, mid: str(m.mid), text: typeof m.text === 'string' ? m.text.slice(0, 500) : typeof m.title === 'string' ? m.title.slice(0, 500) : '' });
     }
   }
   return rows;
