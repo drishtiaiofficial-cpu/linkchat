@@ -88,3 +88,16 @@ export function extractMessages(payload: unknown): MessageRow[] {
   }
   return rows;
 }
+
+/** Debug only: kinds of non-comment events Meta sends us (names, never text). */
+export function describeNonComment(payload: unknown): Record<string, unknown> | null {
+  if (!isObj(payload) || !Array.isArray(payload.entry)) return null;
+  const kinds: string[] = [];
+  for (const entry of payload.entry) {
+    if (!isObj(entry)) continue;
+    if (Array.isArray(entry.changes)) for (const c of entry.changes) if (isObj(c) && c.field !== 'comments') kinds.push(`change:${String(c.field)}`);
+    if (Array.isArray(entry.messaging)) for (const ev of entry.messaging) kinds.push(`messaging:${isObj(ev) ? Object.keys(ev).filter((k) => k !== 'sender' && k !== 'recipient' && k !== 'timestamp').join('+') : '?'}`);
+    for (const k of Object.keys(entry)) if (!['id', 'time', 'changes', 'messaging'].includes(k)) kinds.push(`key:${k}`);
+  }
+  return kinds.length ? { object: String(payload.object), kinds: kinds.slice(0, 8) } : null;
+}

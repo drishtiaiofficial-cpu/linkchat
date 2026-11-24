@@ -1,4 +1,4 @@
-import { constantTimeEqual, extractComments, extractMessages, verifySignature } from './webhook.js';
+import { constantTimeEqual, describeNonComment, extractComments, extractMessages, verifySignature } from './webhook.js';
 import { ingestMessages } from './gates.js';
 import { makeDb } from './db.js';
 import { ingest } from './ingest.js';
@@ -45,6 +45,10 @@ export async function handle(request: Request, env: Env): Promise<Response> {
   if (!(await verifySignature(clean(env.APP_SECRET), raw, request.headers.get('x-hub-signature-256')))) return text('bad signature', 401);
   let payload: unknown;
   try { payload = JSON.parse(raw); } catch { return text('bad json', 400); }
+  const other = describeNonComment(payload);
+  if (other) {
+    try { await makeDb(clean(env.SUPABASE_URL), clean(env.SUPABASE_SERVICE_KEY)).insert('heartbeat', { name: 'hook_other', at: new Date().toISOString(), info: other }, { onConflict: 'name' }); } catch { /* debug only */ }
+  }
   const msgs = extractMessages(payload);
   if (msgs.length > 0) {
     try { await ingestMessages(makeDb(clean(env.SUPABASE_URL), clean(env.SUPABASE_SERVICE_KEY)), msgs); } catch (e) { console.log('messages failed', String(e).slice(0, 200)); }
