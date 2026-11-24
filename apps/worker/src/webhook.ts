@@ -66,3 +66,23 @@ export function extractComments(payload: unknown): CommentRow[] {
   }
   return rows;
 }
+
+export interface MessageRow { ig_user_id: string; sender_id: string; mid: string | null; text: string }
+
+/** Incoming DMs (a button tap or a reply). Our own echoes are dropped. Text is DATA only. */
+export function extractMessages(payload: unknown): MessageRow[] {
+  const rows: MessageRow[] = [];
+  if (!isObj(payload) || payload.object !== 'instagram' || !Array.isArray(payload.entry)) return rows;
+  for (const entry of payload.entry) {
+    if (!isObj(entry) || !Array.isArray(entry.messaging)) continue;
+    const igUserId = str(entry.id);
+    if (!igUserId) continue;
+    for (const ev of entry.messaging) {
+      if (!isObj(ev) || !isObj(ev.message) || !isObj(ev.sender)) continue;
+      const senderId = str(ev.sender.id);
+      if (!senderId || senderId === igUserId || ev.message.is_echo === true) continue;
+      rows.push({ ig_user_id: igUserId, sender_id: senderId, mid: str(ev.message.mid), text: typeof ev.message.text === 'string' ? ev.message.text.slice(0, 500) : '' });
+    }
+  }
+  return rows;
+}

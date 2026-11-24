@@ -9,15 +9,15 @@ const NOW = Date.parse('2026-11-24T14:00:00.000Z');
 const env: Env = { APP_SECRET: 's', VERIFY_TOKEN: 't', SUPABASE_URL: 'https://x', SUPABASE_SERVICE_KEY: 'k', TOKEN_KEY: KEY, LIVE_ENABLED: 'true' };
 afterEach(() => vi.unstubAllGlobals());
 
-async function setup() {
+async function setup(flow?: string, job: Record<string, unknown> = {}) {
   const tok = await encryptToken('TOK', KEY);
   const writes: { table: string; data: Record<string, unknown> }[] = [];
   const db: Db = {
     select: async <T,>(t: string, q: string) => {
       if (t === 'accounts') return [{ id: 'a1', workspace_id: 'w1', ig_user_id: '99', live_since: '2026-11-20T00:00:00.000Z' }] as T[];
-      if (t === 'dm_jobs' && q.includes('status=eq.queued')) return [{ id: 'j1', comment_id: 'c1', campaign_id: 'k1', from_id: 'u1', username: 'u1', reel_id: 'r1', comment_at: '2026-11-24T13:50:00.000Z' }] as T[];
+      if (t === 'dm_jobs' && q.includes('status=eq.queued')) return [{ id: 'j1', comment_id: 'c1', campaign_id: 'k1', from_id: 'u1', username: 'u1', reel_id: 'r1', comment_at: '2026-11-24T13:50:00.000Z', ...job }] as T[];
       if (t === 'account_tokens') return [{ token_enc: tok }] as T[];
-      if (t === 'campaigns') return [{ id: 'k1', link_url: 'https://example.com/x', variants: ['Hey {name} {link}'], template: 'Hi {link}' }] as T[];
+      if (t === 'campaigns') return [{ id: 'k1', link_url: 'https://example.com/x', variants: ['Hey {name} {link}'], template: 'Hi {link}', flow }] as T[];
       return [] as T[];
     },
     insert: async (table, data) => { writes.push({ table, data: data as Record<string, unknown> }); return true; },
@@ -54,5 +54,22 @@ describe('live sending', () => {
     const c = liveConfig({ id: 'a', workspace_id: 'w', ig_user_id: '1', live_since: new Date(NOW - 86_400_000).toISOString(), daily_cap: 20 }, NOW);
     expect(c.gapSec).toBe(40);
     expect(c.dailyCap).toBe(20);
+  });
+  it('button flow: the first message has a button and no link, then a gate is saved', async () => {
+    let body = '';
+    vi.stubGlobal('fetch', async (_u: string, init: RequestInit) => { body = String(init.body); return new Response('{}', { status: 200 }); });
+    const { db, writes } = await setup('gate');
+    await runLive(db, env, NOW, []);
+    expect(body).toContain('quick_replies');
+    expect(body).not.toContain('https://');
+    expect(writes.some((w) => w.table === 'dm_gates' && w.data.status === 'waiting')).toBe(true);
+  });
+  it('button flow: a link job goes to the person id, with the saved link', async () => {
+    let body = '';
+    vi.stubGlobal('fetch', async (_u: string, init: RequestInit) => { body = String(init.body); return new Response('{}', { status: 200 }); });
+    const { db } = await setup('gate', { stage: 'link', recipient_id: 'u1', comment_id: 'c1:link' });
+    await runLive(db, env, NOW, []);
+    expect(body).toContain('"recipient":{"id":"u1"}');
+    expect(body).toContain('https://example.com/x');
   });
 });

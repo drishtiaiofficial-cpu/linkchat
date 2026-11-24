@@ -47,12 +47,14 @@ export async function getIgUser(igId: string, token: string): Promise<{ ok: bool
 }
 
 export type SendOutcome = { ok: true } | { ok: false; error: string; detail: string };
+export type DmTarget = { commentId: string } | { userId: string };
 
-export async function sendPrivateReply(igId: string, token: string, commentId: string, text: string): Promise<SendOutcome> {
+export async function sendDm(igId: string, token: string, to: DmTarget, message: Record<string, unknown>): Promise<SendOutcome> {
   const q = new URLSearchParams({ access_token: token });
+  const recipient = 'commentId' in to ? { comment_id: to.commentId } : { id: to.userId };
   let res: Response;
   try {
-    res = await fetch(`${G}/${igId}/messages?${q}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ recipient: { comment_id: commentId }, message: { text } }) });
+    res = await fetch(`${G}/${igId}/messages?${q}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ recipient, message }) });
   } catch { return { ok: false, error: 'NETWORK', detail: 'network' }; }
   if (res.ok) return { ok: true };
   const b = (await res.json().catch(() => ({}))) as { error?: { code?: number; error_subcode?: number; message?: string } };
@@ -63,3 +65,5 @@ export async function sendPrivateReply(igId: string, token: string, commentId: s
   if (code === 368) return { ok: false, error: 'BLOCKED', detail };
   return { ok: false, error: 'SEND_FAILED', detail };
 }
+
+export const sendPrivateReply = (igId: string, token: string, commentId: string, text: string): Promise<SendOutcome> => sendDm(igId, token, { commentId }, { text });
