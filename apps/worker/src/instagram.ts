@@ -67,3 +67,11 @@ export async function sendDm(igId: string, token: string, to: DmTarget, message:
 }
 
 export const sendPrivateReply = (igId: string, token: string, commentId: string, text: string): Promise<SendOutcome> => sendDm(igId, token, { commentId }, { text });
+
+export async function getSubscribedFields(igId: string, token: string): Promise<string[] | null> {
+  const q = new URLSearchParams({ access_token: token });
+  const res = await fetch(`${G}/${igId}/subscribed_apps?${q}`);
+  if (!res.ok) return null;
+  const b = (await res.json().catch(() => ({}))) as { data?: { subscribed_fields?: string[] }[] };
+  return (b.data ?? []).flatMap((d) => d.subscribed_fields ?? []);
+}
