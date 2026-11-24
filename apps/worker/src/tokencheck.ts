@@ -1,5 +1,5 @@
 import { decryptToken } from './crypto.js';
-import { debugToken, getIgUser, getSubscribedFields, subscribeWebhooks } from './instagram.js';
+import { debugToken, getIgUser, getSubscribedFields, probeConversation, subscribeWebhooks } from './instagram.js';
 import type { Db } from './db.js';
 import type { Env } from './index.js';
 
@@ -20,7 +20,9 @@ export async function tokenCheck(db: Db, env: Env, now: number, log: string[]): 
       const ig = acc ? await getIgUser(acc.ig_user_id, token) : null;
       const subs = acc ? await getSubscribedFields(acc.ig_user_id, token) : null;
       const resub = acc && subs && !subs.includes('messages') ? await subscribeWebhooks(acc.ig_user_id, token) : null;
-      out.push({ acc: acc8, valid: d.valid, type: d.type, expires_at: d.expiresAt, scopes: d.scopes, ig, subs, resub });
+      const [gate] = acc ? await db.select<{ igsid: string }>('dm_gates', `account_id=eq.${r.account_id}&order=created_at.desc&limit=1&select=igsid`) : [];
+      const convo = acc && gate ? await probeConversation(acc.ig_user_id, gate.igsid, token) : null;
+      out.push({ acc: acc8, valid: d.valid, type: d.type, expires_at: d.expiresAt, scopes: d.scopes, ig, subs, resub, convo });
       if (d.expiresAt !== null) await db.update('account_tokens', `account_id=eq.${r.account_id}`, { expires_at: new Date(d.expiresAt === 0 ? 4_102_444_800_000 : d.expiresAt * 1000).toISOString() });
     } catch (e) { out.push({ acc: acc8, error: String(e).slice(0, 120) }); }
   }

@@ -75,3 +75,13 @@ export async function getSubscribedFields(igId: string, token: string): Promise<
   const b = (await res.json().catch(() => ({}))) as { data?: { subscribed_fields?: string[] }[] };
   return (b.data ?? []).flatMap((d) => d.subscribed_fields ?? []);
 }
+
+/** Debug probe: does Meta's API see the conversation with this person? Returns ids and times only, never text. */
+export async function probeConversation(igId: string, userId: string, token: string): Promise<Record<string, unknown>> {
+  const q = new URLSearchParams({ platform: 'instagram', user_id: userId, fields: 'messages.limit(3){from,created_time}', access_token: token });
+  const res = await fetch(`${G}/${igId}/conversations?${q}`);
+  const b = (await res.json().catch(() => ({}))) as { data?: { messages?: { data?: { from?: { id?: string }; created_time?: string }[] } }[]; error?: { message?: string } };
+  if (!res.ok) return { ok: false, status: res.status, err: String(b.error?.message ?? '').slice(0, 100) };
+  const msgs = (b.data ?? []).flatMap((c) => c.messages?.data ?? []);
+  return { ok: true, convos: (b.data ?? []).length, msgs: msgs.map((m) => `${m.from?.id ?? '?'}@${m.created_time ?? '?'}`) };
+}
