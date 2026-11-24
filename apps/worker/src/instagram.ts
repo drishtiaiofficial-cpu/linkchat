@@ -45,3 +45,21 @@ export async function getIgUser(igId: string, token: string): Promise<{ ok: bool
   const b = (await res.json().catch(() => ({}))) as Record<string, unknown>;
   return { ok: res.ok, status: res.status, username: String(b.username ?? '') };
 }
+
+export type SendOutcome = { ok: true } | { ok: false; error: string; detail: string };
+
+export async function sendPrivateReply(igId: string, token: string, commentId: string, text: string): Promise<SendOutcome> {
+  const q = new URLSearchParams({ access_token: token });
+  let res: Response;
+  try {
+    res = await fetch(`${G}/${igId}/messages?${q}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ recipient: { comment_id: commentId }, message: { text } }) });
+  } catch { return { ok: false, error: 'NETWORK', detail: 'network' }; }
+  if (res.ok) return { ok: true };
+  const b = (await res.json().catch(() => ({}))) as { error?: { code?: number; error_subcode?: number } };
+  const code = b.error?.code ?? 0;
+  const detail = `${res.status}/${code}/${b.error?.error_subcode ?? 0}`;
+  if (res.status === 429 || [4, 17, 32, 613].includes(code)) return { ok: false, error: 'RATE_LIMIT', detail };
+  if (code === 190 || code === 102) return { ok: false, error: 'TOKEN_INVALID', detail };
+  if (code === 368) return { ok: false, error: 'BLOCKED', detail };
+  return { ok: false, error: 'SEND_FAILED', detail };
+}

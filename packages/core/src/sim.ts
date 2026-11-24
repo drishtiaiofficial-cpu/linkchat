@@ -14,6 +14,8 @@ export type Step =
   | { kind: 'paused'; reason: string }
   | { kind: 'idle' };
 
+export type Prepared = { kind: 'ready'; job: QJob } | Exclude<Step, { kind: 'sent' } | { kind: 'failed' }>;
+
 const FAIL_WINDOW = 20;
 const FAIL_LIMIT = 3; // 15% of 20
 
@@ -57,7 +59,7 @@ export class AccountQueue {
     this.queued = this.queued.filter((j) => j !== job);
   }
 
-  step(now: number, send: (job: QJob) => SendResult): Step {
+  prepare(now: number): Prepared {
     if (this.paused) return { kind: 'paused', reason: this.paused };
     for (;;) {
       this.expire(now);
@@ -73,21 +75,30 @@ export class AccountQueue {
         this.take(q);
         continue;
       }
-      const res = send(q);
-      this.take(q);
-      this.lastReel = q.reelId;
-      if (res.ok || res.error !== 'COMPOSE_FAILED') this.recent = [...this.recent.slice(-(FAIL_WINDOW - 1)), res.ok];
-      if (res.ok) {
-        q.status = 'sent';
-        this.state = recordSend(this.state, this.cfg, now, this.rand);
-        this.lastDm.set(q.userId, now);
-        return { kind: 'sent', job: q };
-      }
-      q.status = 'failed';
-      const fails = this.recent.filter((x) => !x).length;
-      if (res.error === 'RATE_LIMIT' || fails >= FAIL_LIMIT) this.paused = `circuit_breaker:${res.error}`;
-      return { kind: 'failed', job: q, error: res.error };
+      return { kind: 'ready', job: q };
     }
+  }
+
+  complete(q: QJob, res: SendResult, now: number): Step {
+    this.take(q);
+    this.lastReel = q.reelId;
+    if (res.ok || res.error !== 'COMPOSE_FAILED') this.recent = [...this.recent.slice(-(FAIL_WINDOW - 1)), res.ok];
+    if (res.ok) {
+      q.status = 'sent';
+      this.state = recordSend(this.state, this.cfg, now, this.rand);
+      this.lastDm.set(q.userId, now);
+      return { kind: 'sent', job: q };
+    }
+    q.status = 'failed';
+    const fails = this.recent.filter((x) => !x).length;
+    if (res.error === 'RATE_LIMIT' || fails >= FAIL_LIMIT) this.paused = `circuit_breaker:${res.error}`;
+    return { kind: 'failed', job: q, error: res.error };
+  }
+
+  step(now: number, send: (job: QJob) => SendResult): Step {
+    const p = this.prepare(now);
+    if (p.kind !== 'ready') return p;
+    return this.complete(p.job, send(p.job), now);
   }
 }
 

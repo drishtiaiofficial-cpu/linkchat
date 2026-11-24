@@ -4,10 +4,11 @@ import { ingest } from './ingest.js';
 import { runDryRun } from './dryrun.js';
 import { connectStart, oauthCallback, refreshDue } from './oauth.js';
 import { tokenCheck } from './tokencheck.js';
+import { runLive } from './live.js';
 
 export interface Env {
   APP_SECRET: string; VERIFY_TOKEN: string; SUPABASE_URL: string; SUPABASE_SERVICE_KEY: string;
-  META_APP_ID?: string; UNIFIED_CONFIG_ID?: string; TOKEN_KEY?: string; WEB_URL?: string;
+  META_APP_ID?: string; UNIFIED_CONFIG_ID?: string; LIVE_ENABLED?: string; TOKEN_KEY?: string; WEB_URL?: string;
 }
 
 const MAX_BODY = 1_000_000;
@@ -62,7 +63,9 @@ export default {
       const log: string[] = [];
       let sent = 0;
       let error: string | null = null;
-      try { sent = await runDryRun(db, Date.now(), 40, log); } catch (e) { error = String(e).slice(0, 300); }
+      let liveCalls = 0;
+      try { liveCalls = await runLive(db, env, Date.now(), log); } catch (e) { log.push(`live error ${String(e).slice(0, 80)}`); }
+      try { sent = await runDryRun(db, Date.now(), Math.max(10, 40 - liveCalls), log); } catch (e) { error = String(e).slice(0, 300); }
       try { await tokenCheck(db, env, Date.now(), log); } catch (e) { log.push(`token check error ${String(e).slice(0, 80)}`); }
       try { await refreshDue(db, env, Date.now(), log); } catch (e) { log.push(`refresh error ${String(e).slice(0, 80)}`); }
       await db.insert('heartbeat', { name: 'cron', at: new Date().toISOString(), info: { sent, error, log: log.slice(0, 8) } }, { onConflict: 'name' });
