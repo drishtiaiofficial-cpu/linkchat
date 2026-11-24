@@ -6,7 +6,7 @@ import { connectStart, oauthCallback, refreshDue } from './oauth.js';
 
 export interface Env {
   APP_SECRET: string; VERIFY_TOKEN: string; SUPABASE_URL: string; SUPABASE_SERVICE_KEY: string;
-  INSTAGRAM_APP_ID?: string; INSTAGRAM_APP_SECRET?: string; TOKEN_KEY?: string; WEB_URL?: string;
+  META_APP_ID?: string; UNIFIED_CONFIG_ID?: string; TOKEN_KEY?: string; WEB_URL?: string;
 }
 
 const MAX_BODY = 1_000_000;

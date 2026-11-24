@@ -5,3 +5,7 @@ workers_dev = true
 
 [triggers]
 crons = ["* * * * *"]
+
+[vars]
+META_APP_ID = "1077769668651072"
+UNIFIED_CONFIG_ID = "4561688690719296"

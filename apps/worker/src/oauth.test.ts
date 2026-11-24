@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { decryptToken, encryptToken } from './crypto.js';
 import { connectStart, oauthCallback } from './oauth.js';
-import { authUrl } from './instagram.js';
+import { authUrl, getAccounts } from './instagram.js';
 import type { Db } from './db.js';
 import type { Env } from './index.js';
 
 const KEY = btoa('A'.repeat(32));
-const env: Env = { APP_SECRET: 's', VERIFY_TOKEN: 't', SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_KEY: 'k', INSTAGRAM_APP_ID: 'app1', INSTAGRAM_APP_SECRET: 'sec1', TOKEN_KEY: KEY, WEB_URL: 'https://web.example.dev' };
+const env: Env = { APP_SECRET: 's', VERIFY_TOKEN: 't', SUPABASE_URL: 'https://x.supabase.co', SUPABASE_SERVICE_KEY: 'k', META_APP_ID: 'app1', UNIFIED_CONFIG_ID: 'cfg1', TOKEN_KEY: KEY, WEB_URL: 'https://web.example.dev' };
 afterEach(() => vi.unstubAllGlobals());
 
 function fakeDb(tables: Record<string, unknown[][]>) {
@@ -35,11 +35,16 @@ describe('token encryption', () => {
 });
 
 describe('connect flow', () => {
-  it('builds the Instagram Allow url with the needed scopes', () => {
-    const u = authUrl('app1', 'https://bot/oauth/callback', 'st1');
+  it('builds the Unified Login url', () => {
+    const u = authUrl('app1', 'cfg1', 'https://bot/oauth/callback', 'st1');
+    expect(u).toContain('facebook.com/dialog/oauth');
     expect(u).toContain('client_id=app1');
-    expect(u).toContain('instagram_business_manage_messages');
+    expect(u).toContain('config_id=cfg1');
     expect(u).toContain('state=st1');
+  });
+  it('reads assigned accounts', async () => {
+    vi.stubGlobal('fetch', async () => new Response(JSON.stringify({ data: [{ id: '1', username: 'a' }, { username: 'noid' }] }), { status: 200 }));
+    expect(await getAccounts('T')).toEqual([{ id: '1', username: 'a' }]);
   });
   it('refuses a request without login or from another site', async () => {
     const { db } = fakeDb({});
@@ -54,15 +59,14 @@ describe('connect flow', () => {
     const r = await connectStart(new Request('https://bot/connect/start', { method: 'POST', headers: { origin: 'https://web.example.dev', authorization: 'Bearer jwt' } }), env, db);
     expect(r.status).toBe(200);
     expect(writes[0]?.table).toBe('oauth_states');
-    expect(String(((await r.json()) as { url: string }).url)).toContain('instagram.com/oauth/authorize');
+    expect(String(((await r.json()) as { url: string }).url)).toContain('facebook.com/dialog/oauth');
   });
   it('callback stores only an encrypted token and subscribes webhooks', async () => {
     const seen: string[] = [];
     vi.stubGlobal('fetch', async (u: string) => {
       seen.push(String(u));
-      if (String(u).includes('oauth/access_token')) return new Response(JSON.stringify({ data: [{ access_token: 'SHORT' }] }), { status: 200 });
-      if (String(u).includes('/access_token?')) return new Response(JSON.stringify({ access_token: 'LONGTOKEN', expires_in: 5184000 }), { status: 200 });
-      if (String(u).includes('/me?')) return new Response(JSON.stringify({ user_id: '999', username: 'newacc', account_type: 'BUSINESS' }), { status: 200 });
+      if (String(u).includes('oauth/access_token')) return new Response(JSON.stringify({ access_token: 'LONGTOKEN' }), { status: 200 });
+      if (String(u).includes('assigned_instagram_accounts')) return new Response(JSON.stringify({ data: [{ id: '999', username: 'newacc' }] }), { status: 200 });
       return new Response('{}', { status: 200 });
     });
     const { db, writes } = fakeDb({ oauth_states: [[{ workspace_id: 'w1' }]], accounts: [[], [{ id: 'a1', workspace_id: 'w1' }]] });
