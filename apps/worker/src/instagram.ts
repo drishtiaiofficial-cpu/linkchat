@@ -31,3 +31,17 @@ export async function subscribeWebhooks(igId: string, token: string): Promise<bo
   const q = new URLSearchParams({ subscribed_fields: 'comments,messages', access_token: token });
   return (await fetch(`${G}/${igId}/subscribed_apps?${q}`, { method: 'POST' })).ok;
 }
+
+export async function debugToken(appId: string, secret: string, token: string): Promise<{ valid: boolean; type: string; expiresAt: number | null; scopes: string[] }> {
+  const q = new URLSearchParams({ input_token: token, access_token: `${appId}|${secret}` });
+  const b = await readJson(await fetch(`${G}/debug_token?${q}`), 'debug token');
+  const d = (b.data ?? {}) as Record<string, unknown>;
+  return { valid: d.is_valid === true, type: String(d.type ?? ''), expiresAt: typeof d.expires_at === 'number' ? d.expires_at : null, scopes: Array.isArray(d.scopes) ? (d.scopes as string[]) : [] };
+}
+
+export async function getIgUser(igId: string, token: string): Promise<{ ok: boolean; status: number; username: string }> {
+  const q = new URLSearchParams({ fields: 'id,username', access_token: token });
+  const res = await fetch(`${G}/${igId}?${q}`);
+  const b = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+  return { ok: res.ok, status: res.status, username: String(b.username ?? '') };
+}

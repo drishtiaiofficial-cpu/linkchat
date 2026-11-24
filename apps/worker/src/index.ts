@@ -3,6 +3,7 @@ import { makeDb } from './db.js';
 import { ingest } from './ingest.js';
 import { runDryRun } from './dryrun.js';
 import { connectStart, oauthCallback, refreshDue } from './oauth.js';
+import { tokenCheck } from './tokencheck.js';
 
 export interface Env {
   APP_SECRET: string; VERIFY_TOKEN: string; SUPABASE_URL: string; SUPABASE_SERVICE_KEY: string;
@@ -62,6 +63,7 @@ export default {
       let sent = 0;
       let error: string | null = null;
       try { sent = await runDryRun(db, Date.now(), 40, log); } catch (e) { error = String(e).slice(0, 300); }
+      try { await tokenCheck(db, env, Date.now(), log); } catch (e) { log.push(`token check error ${String(e).slice(0, 80)}`); }
       try { await refreshDue(db, env, Date.now(), log); } catch (e) { log.push(`refresh error ${String(e).slice(0, 80)}`); }
       await db.insert('heartbeat', { name: 'cron', at: new Date().toISOString(), info: { sent, error, log: log.slice(0, 8) } }, { onConflict: 'name' });
     })());
