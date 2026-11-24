@@ -1,5 +1,5 @@
 import { constantTimeEqual, describeNonComment, extractComments, extractMessages, verifySignature } from './webhook.js';
-import { ingestMessages } from './gates.js';
+import { ingestMessages, pollGates } from './gates.js';
 import { makeDb } from './db.js';
 import { ingest } from './ingest.js';
 import { runDryRun } from './dryrun.js';
@@ -74,7 +74,9 @@ export default {
       let error: string | null = null;
       let liveCalls = 0;
       try { liveCalls = await runLive(db, env, Date.now(), log); } catch (e) { log.push(`live error ${String(e).slice(0, 80)}`); }
-      try { sent = await runDryRun(db, Date.now(), Math.max(10, 40 - liveCalls), log); } catch (e) { error = String(e).slice(0, 300); }
+      let pollCalls = 0;
+      try { pollCalls = await pollGates(db, env, Date.now(), log); } catch (e) { log.push(`poll error ${String(e).slice(0, 80)}`); }
+      try { sent = await runDryRun(db, Date.now(), Math.max(10, 40 - liveCalls - pollCalls), log); } catch (e) { error = String(e).slice(0, 300); }
       try { await tokenCheck(db, env, Date.now(), log); } catch (e) { log.push(`token check error ${String(e).slice(0, 80)}`); }
       try { await refreshDue(db, env, Date.now(), log); } catch (e) { log.push(`refresh error ${String(e).slice(0, 80)}`); }
       await db.insert('heartbeat', { name: 'cron', at: new Date().toISOString(), info: { sent, error, log: log.slice(0, 8) } }, { onConflict: 'name' });

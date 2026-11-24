@@ -85,3 +85,12 @@ export async function probeConversation(igId: string, userId: string, token: str
   const msgs = (b.data ?? []).flatMap((c) => c.messages?.data ?? []);
   return { ok: true, convos: (b.data ?? []).length, msgs: msgs.map((m) => `${m.from?.id ?? '?'}@${m.created_time ?? '?'}`) };
 }
+
+/** Recent messages in the conversation with one person (used only as a backup when the webhook does not arrive). */
+export async function listRecentFromUser(igId: string, userId: string, token: string): Promise<{ from: string; at: number; text: string }[] | null> {
+  const q = new URLSearchParams({ platform: 'instagram', user_id: userId, fields: 'messages.limit(10){from,created_time,message}', access_token: token });
+  const res = await fetch(`${G}/${igId}/conversations?${q}`);
+  if (!res.ok) return null;
+  const b = (await res.json().catch(() => ({}))) as { data?: { messages?: { data?: { from?: { id?: string }; created_time?: string; message?: string }[] } }[] };
+  return (b.data ?? []).flatMap((c) => c.messages?.data ?? []).map((m) => ({ from: m.from?.id ?? '', at: Date.parse(String(m.created_time ?? '').replace(/([+-]\d\d)(\d\d)$/, '$1:$2')), text: m.message ?? '' }));
+}
